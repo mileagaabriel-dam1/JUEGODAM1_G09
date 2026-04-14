@@ -1,44 +1,85 @@
 package Controladores;
 
 import Modelo.*;
+import Vista.GestorSonido;
 
 public class ControladorEventos {
 
-    public String procesarCasilla(Jugador j, Casilla c) {
+    public String procesarCasilla(Jugador jugador, Casilla casilla) {
 
-        switch (c.getTipo()) {
+        Entidad entidad = null;
+        String mensaje = "";
+
+        switch(casilla.getTipo()) {
+            case PINGUINO:
+                entidad = new Pinguino();
+                break;
 
             case OSO:
-                return new Oso().interactuar(j);
+                entidad = new Oso();
+                GestorSonido.getInstancia().reproducirEfecto("oso");
+                break;
 
             case AGUJERO:
-                return new AgujeroHielo().interactuar(j);
+                entidad = new AgujeroHielo();
+                GestorSonido.getInstancia().reproducirEfecto("agujero");
+                break;
 
             case TRINEO:
-                return new Trineo().interactuar(j);
-
-            case PINGUINO:
-                return new Pinguino().interactuar(j);
+                entidad = new Trineo();
+                GestorSonido.getInstancia().reproducirEfecto("trineo");
+                break;
 
             case INTERROGANTE:
-                return eventoAleatorio(j);
+                return eventoAleatorio(jugador);
         }
 
-        return "";
+        if (entidad != null) {
+            mensaje = entidad.interactuar(jugador);
+        }
+
+        return mensaje;
     }
 
-    private String eventoAleatorio(Jugador j) {
+    private String eventoAleatorio(Jugador jugador) {
+        int evento = (int)(Math.random() * 5);
+        String mensaje = "  ❓ ";
 
-        int r = (int)(Math.random() * 5);
+        switch(evento) {
+            case 0:
+                mensaje += "¡Evento: Encuentras un pez!";
+                jugador.getInventario().agregarPez();
+                GestorSonido.getInstancia().reproducirEfecto("item");
+                break;
 
-        switch (r) {
-            case 0: j.getInventario().agregarPez(); return "Pez";
-            case 1: j.getInventario().agregarBolaNieve(); return "Bola nieve";
-            case 2: j.getInventario().agregarDado(); return "Dado";
-            case 3: j.getInventario().quitarDado(); return "Pierdes dado";
-            case 4: j.setPosicion(Math.max(0, j.getPosicion() - 2)); return "Retroceso";
+            case 1:
+                mensaje += "¡Evento: Encuentras bolas de nieve!";
+                jugador.getInventario().agregarBolaNieve();
+                GestorSonido.getInstancia().reproducirEfecto("item");
+                break;
+
+            case 2:
+                mensaje += "¡Evento: Ganas un dado extra!";
+                jugador.getInventario().agregarDado();
+                GestorSonido.getInstancia().reproducirEfecto("item");
+                break;
+
+            case 3:
+                if (jugador.getInventario().getDados() > 1) {
+                    mensaje += "¡Evento: Pierdes un dado!";
+                    jugador.getInventario().quitarDado();
+                } else {
+                    mensaje += "¡Evento: Casi pierdes un dado!";
+                }
+                break;
+
+            case 4:
+                Foca foca = new Foca();
+                mensaje = foca.interactuar(jugador);
+                GestorSonido.getInstancia().reproducirEfecto("foca");
+                break;
         }
 
-        return "";
+        return mensaje;
     }
 }

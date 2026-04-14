@@ -9,16 +9,16 @@ public class Pinguino implements Entidad {
 
     @Override
     public String getSimbolo() {
-        return "P"; // más limpio para tablero en consola
+        return "🐧";
     }
 
     @Override
     public String getDescripcion() {
-        return "Casilla de inicio del jugador.";
+        return "Punto de salida";
     }
 
     @Override
     public String interactuar(Jugador jugador) {
-        return "Estás en la casilla de inicio con los pingüinos.";
+        return "🐧 Estás en la casilla de los pingüinos.";
     }
 }

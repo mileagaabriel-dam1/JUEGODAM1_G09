@@ -11,42 +11,26 @@ public class Item {
 
     public Item(TipoItem tipo) {
         this.tipo = tipo;
-        this.nombre = definirNombre(tipo);
-    }
-
-    private String definirNombre(TipoItem tipo) {
 
         switch (tipo) {
-
             case PEZ:
-                return "Pez";
-
+                this.nombre = "Pez";
+                break;
             case BOLA_NIEVE:
-                return "Bola de nieve";
-
+                this.nombre = "Bola de nieve";
+                break;
             case DADO:
-                return "Dado extra";
-
-            default:
-                return "Desconocido";
+                this.nombre = "Dado extra";
+                break;
         }
     }
 
     public String getSimbolo() {
-
         switch (tipo) {
-
-            case PEZ:
-                return "PEZ";
-
-            case BOLA_NIEVE:
-                return "NIEVE";
-
-            case DADO:
-                return "DADO";
-
-            default:
-                return "OBJETO";
+            case PEZ: return "🐟";
+            case BOLA_NIEVE: return "⛄";
+            case DADO: return "🎲";
+            default: return "📦";
         }
     }
 

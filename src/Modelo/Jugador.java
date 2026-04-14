@@ -1,3 +1,71 @@
-public int lanzarDado() {
-    return (int)(Math.random() * 6) + 1;
+package Modelo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Jugador {
+
+    private String nombre;
+    private String color;
+    private TipoJugador tipo;
+    private int posicion;
+    private Inventario inventario;
+    private List<String> historial;
+
+    public Jugador(String nombre, String color, TipoJugador tipo) {
+        this.nombre = nombre;
+        this.color = color;
+        this.tipo = tipo;
+        this.posicion = 0;
+        this.inventario = new Inventario();
+        this.historial = new ArrayList<>();
+    }
+
+    public int lanzarDado() {
+        int resultado = (int) (Math.random() * 6) + 1;
+        registrarAccion("Ha sacado un " + resultado);
+        return resultado;
+    }
+
+    public void registrarAccion(String accion) {
+        historial.add(accion);
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public TipoJugador getTipo() {
+        return tipo;
+    }
+
+    public int getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(int posicion) {
+        if (posicion < 0) {
+            this.posicion = 0;
+        } else if (posicion > 49) {
+            this.posicion = 49;
+        } else {
+            this.posicion = posicion;
+        }
+    }
+
+    public Inventario getInventario() {
+        return inventario;
+    }
+
+    public List<String> getHistorial() {
+        return historial;
+    }
+
+    public boolean esIA() {
+        return tipo == TipoJugador.IA;
+    }
 }

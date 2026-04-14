@@ -3,42 +3,44 @@ package Modelo;
 public class Foca implements Entidad {
 
     @Override
-    public String getNombre() {
-        return "Foca";
+    public String getNombre() { 
+        return "Foca"; 
     }
 
     @Override
-    public String getSimbolo() {
-        return "🦭"; // o "F" si quieres modo consola puro
+    public String getSimbolo() { 
+        return "🦭"; 
     }
-
+    
     @Override
-    public String getDescripcion() {
-        return "Una foca traviesa que puede robarte recursos o hacerte retroceder.";
+    public String getDescripcion() { 
+        return "Te ha encontrado una Foca, cuidado con ella"; 
     }
-
+    
     @Override
     public String interactuar(Jugador jugador) {
+        String mensaje = "🦭 Te ha atrapado una foca. ";
 
         int accion = (int)(Math.random() * 4);
-
-        switch (accion) {
-
+        
+        switch(accion) {
             case 0:
+                mensaje += "Te ha quitado un pez.";
                 jugador.getInventario().quitarPez();
-                return "La foca te roba un pez.";
-
+                break;
             case 1:
+                mensaje += "Te ha quitado una bola de nieve.";
                 jugador.getInventario().quitarBolaNieve();
-                return "La foca te roba una bola de nieve.";
-
+                break;
             case 2:
+                mensaje += "Te hace retroceder 2 casillas.";
                 jugador.setPosicion(Math.max(0, jugador.getPosicion() - 2));
-                return "La foca te empuja hacia atrás 2 casillas.";
-
+                break;
             case 3:
-            default:
-                return "La foca te mira... pero decides huir a tiempo.";
+                mensaje += "¡Te has salvado esta vez!";
+                break;
         }
+        
+        return mensaje;
     }
 }

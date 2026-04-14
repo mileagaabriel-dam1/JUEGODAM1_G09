@@ -12,72 +12,76 @@ public class Inventario {
     private static final int MAX_DADOS = 3;
 
     public Inventario() {
-
         items = new HashMap<>();
-
         items.put(Item.TipoItem.PEZ, 2);
         items.put(Item.TipoItem.BOLA_NIEVE, 0);
         items.put(Item.TipoItem.DADO, 1);
     }
 
-    // 🔥 MÉTODOS SEGUROS
     public void agregarPez() {
-        modificar(Item.TipoItem.PEZ, MAX_PECES, +1);
+        int actual = items.get(Item.TipoItem.PEZ);
+        if (actual < MAX_PECES) {
+            items.put(Item.TipoItem.PEZ, actual + 1);
+        }
     }
 
     public boolean quitarPez() {
-        return modificar(Item.TipoItem.PEZ, MAX_PECES, -1);
-    }
-
-    public void agregarBolaNieve() {
-        modificar(Item.TipoItem.BOLA_NIEVE, MAX_BOLAS, +1);
-    }
-
-    public boolean quitarBolaNieve() {
-        return modificar(Item.TipoItem.BOLA_NIEVE, MAX_BOLAS, -1);
-    }
-
-    public void agregarDado() {
-        modificar(Item.TipoItem.DADO, MAX_DADOS, +1);
-    }
-
-    public boolean quitarDado() {
-        return modificar(Item.TipoItem.DADO, MAX_DADOS, -1);
-    }
-
-    // 🔥 MÉTODO CENTRALIZADO
-    private boolean modificar(Item.TipoItem tipo, int max, int cambio) {
-
-        int actual = items.getOrDefault(tipo, 0);
-        int nuevo = actual + cambio;
-
-        if (nuevo >= 0 && nuevo <= max) {
-            items.put(tipo, nuevo);
+        int actual = items.get(Item.TipoItem.PEZ);
+        if (actual > 0) {
+            items.put(Item.TipoItem.PEZ, actual - 1);
             return true;
         }
-
         return false;
     }
 
-    // GETTERS SEGUROS
+    public void agregarBolaNieve() {
+        int actual = items.get(Item.TipoItem.BOLA_NIEVE);
+        if (actual < MAX_BOLAS) {
+            items.put(Item.TipoItem.BOLA_NIEVE, actual + 1);
+        }
+    }
+
+    public boolean quitarBolaNieve() {
+        int actual = items.get(Item.TipoItem.BOLA_NIEVE);
+        if (actual > 0) {
+            items.put(Item.TipoItem.BOLA_NIEVE, actual - 1);
+            return true;
+        }
+        return false;
+    }
+
+    public void agregarDado() {
+        int actual = items.get(Item.TipoItem.DADO);
+        if (actual < MAX_DADOS) {
+            items.put(Item.TipoItem.DADO, actual + 1);
+        }
+    }
+
+    public boolean quitarDado() {
+        int actual = items.get(Item.TipoItem.DADO);
+        if (actual > 0) {
+            items.put(Item.TipoItem.DADO, actual - 1);
+            return true;
+        }
+        return false;
+    }
+
     public int getPeces() {
-        return items.getOrDefault(Item.TipoItem.PEZ, 0);
+        return items.get(Item.TipoItem.PEZ);
     }
 
     public int getBolasNieve() {
-        return items.getOrDefault(Item.TipoItem.BOLA_NIEVE, 0);
+        return items.get(Item.TipoItem.BOLA_NIEVE);
     }
 
     public int getDados() {
-        return items.getOrDefault(Item.TipoItem.DADO, 0);
+        return items.get(Item.TipoItem.DADO);
     }
 
     public String obtenerResumen() {
         return String.format(
-            "Peces: %d/%d | Bolas de nieve: %d/%d | Dados: %d/%d",
-            getPeces(), MAX_PECES,
-            getBolasNieve(), MAX_BOLAS,
-            getDados(), MAX_DADOS
+            "🐟: %d/2 | ⛄: %d/6 | 🎲: %d/3",
+            getPeces(), getBolasNieve(), getDados()
         );
     }
 }

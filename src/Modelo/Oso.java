@@ -2,8 +2,6 @@ package Modelo;
 
 public class Oso implements Entidad {
 
-    private static final int POS_INICIO = 0;
-
     @Override
     public String getNombre() {
         return "Oso";
@@ -11,19 +9,17 @@ public class Oso implements Entidad {
 
     @Override
     public String getSimbolo() {
-        return "OSO";
+        return "🐻";
     }
 
     @Override
     public String getDescripcion() {
-        return "Un oso salvaje que te devuelve al inicio del tablero.";
+        return "El oso te atacará, vuelves al inicio";
     }
 
     @Override
     public String interactuar(Jugador jugador) {
-
-        jugador.setPosicion(POS_INICIO);
-
-        return "¡El oso te ataca! Vuelves al inicio del tablero.";
+        jugador.setPosicion(0);
+        return "🐻 ¡EL OSO TE HA ATRAPADO! Vuelves al inicio";
     }
 }

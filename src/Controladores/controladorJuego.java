@@ -8,14 +8,25 @@ public class ControladorJuego {
     private ControladorEventos controladorEventos;
 
     public ControladorJuego() {
-        controladorTablero = new ControladorTablero();
-        controladorJugador = new ControladorJugador();
-        controladorTurnos = new ControladorTurnos();
-        controladorEventos = new ControladorEventos();
+        this.controladorTablero = new ControladorTablero();
+        this.controladorJugador = new ControladorJugador();
+        this.controladorTurnos = new ControladorTurnos();
+        this.controladorEventos = new ControladorEventos();
     }
 
-    public ControladorTablero getControladorTablero() { return controladorTablero; }
-    public ControladorJugador getControladorJugador() { return controladorJugador; }
-    public ControladorTurnos getControladorTurnos() { return controladorTurnos; }
-    public ControladorEventos getControladorEventos() { return controladorEventos; }
+    public ControladorTablero getControladorTablero() {
+        return controladorTablero;
+    }
+
+    public ControladorJugador getControladorJugador() {
+        return controladorJugador;
+    }
+
+    public ControladorTurnos getControladorTurnos() {
+        return controladorTurnos;
+    }
+
+    public ControladorEventos getControladorEventos() {
+        return controladorEventos;
+    }
 }

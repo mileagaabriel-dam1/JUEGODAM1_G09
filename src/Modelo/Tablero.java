@@ -14,24 +14,17 @@ public class Tablero {
     }
 
     private void generarTablero() {
-
         casillas.add(new Casilla(0, TipoCasilla.PINGUINO));
 
         TipoCasilla[] tipos = TipoCasilla.values();
 
         for (int i = 1; i < TAMANO; i++) {
-
             int aleatorio = (int) (Math.random() * tipos.length);
             casillas.add(new Casilla(i, tipos[aleatorio]));
         }
     }
 
     public Casilla getCasilla(int index) {
-
-        if (index < 0 || index >= TAMANO) {
-            throw new IndexOutOfBoundsException("Posición fuera del tablero: " + index);
-        }
-
         return casillas.get(index);
     }
 
@@ -40,22 +33,17 @@ public class Tablero {
     }
 
     public void mostrarTablero() {
-
-        System.out.println("\n--- TABLERO (" + TAMANO + " casillas) ---");
-
+        System.out.println("\n--- TABLERO (50 casillas) ---");
         for (int i = 0; i < TAMANO; i++) {
-
             if (i % 10 == 0 && i > 0) {
                 System.out.println();
             }
-
-            System.out.print(String.format("%02d:%s ", i, casillas.get(i).getSimbolo()));
+            System.out.print((i+1) + ":" + casillas.get(i).getSimbolo() + " ");
         }
-
         System.out.println("\n");
     }
 
     public List<Casilla> getCasillas() {
-        return new ArrayList<>(casillas);
+        return casillas;
     }
 }

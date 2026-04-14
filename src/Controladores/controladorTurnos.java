@@ -6,19 +6,35 @@ import java.util.List;
 public class ControladorTurnos {
 
     private List<Jugador> jugadores;
-    private int actual = 0;
+    private int turnoActual;
+
+    public ControladorTurnos() {
+        this.turnoActual = 0;
+    }
 
     public void setJugadores(List<Jugador> jugadores) {
         this.jugadores = jugadores;
-        actual = 0;
+        this.turnoActual = 0;
     }
 
     public Jugador getJugadorActual() {
-        return jugadores.get(actual);
+        if (jugadores != null && !jugadores.isEmpty()) {
+            return jugadores.get(turnoActual);
+        }
+        return null;
     }
 
     public void siguienteTurno() {
-        actual++;
-        if (actual >= jugadores.size()) actual = 0;
+        if (jugadores != null && !jugadores.isEmpty()) {
+            turnoActual = (turnoActual + 1) % jugadores.size();
+        }
+    }
+
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
+    
+    public int getTurnoActual() {
+        return turnoActual;
     }
 }

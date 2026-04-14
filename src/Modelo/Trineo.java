@@ -9,23 +9,19 @@ public class Trineo implements Entidad {
 
     @Override
     public String getSimbolo() {
-        return "TRINEO";
+        return "🛷";
     }
 
     @Override
     public String getDescripcion() {
-        return "Te impulsa hacia adelante varios pasos.";
+        return "Te impulsa hacia adelante";
     }
 
     @Override
     public String interactuar(Jugador jugador) {
-
         int avance = (int) (Math.random() * 4) + 2;
-
-        int nuevaPos = jugador.getPosicion() + avance;
-
+        int nuevaPos = Math.min(jugador.getPosicion() + avance, 49);
         jugador.setPosicion(nuevaPos);
-
-        return "¡TRINEO! Avanzas " + avance + " casillas.";
+        return "🛷 ¡TRINEO! Avanzas " + avance + " casillas extra";
     }
 }

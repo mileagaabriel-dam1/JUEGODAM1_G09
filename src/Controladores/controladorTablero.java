@@ -15,6 +15,10 @@ public class ControladorTablero {
         return tablero.getCasilla(posicion);
     }
 
+    public void mostrarTablero() {
+        tablero.mostrarTablero();
+    }
+
     public int getTamanoTablero() {
         return tablero.getTamano();
     }

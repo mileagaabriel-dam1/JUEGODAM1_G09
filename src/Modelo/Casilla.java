@@ -9,41 +9,40 @@ public class Casilla {
     public Casilla(int posicion, TipoCasilla tipo) {
         this.posicion = posicion;
         this.tipo = tipo;
-        this.entidad = crearEntidad(tipo);
-    }
-
-    private Entidad crearEntidad(TipoCasilla tipo) {
 
         switch (tipo) {
-
             case PINGUINO:
-                return new Pinguino();
-
+                entidad = new Pinguino();
+                break;
             case OSO:
-                return new Oso();
-
+                entidad = new Oso();
+                break;
             case AGUJERO:
-                return new AgujeroHielo();
-
+                entidad = new AgujeroHielo();
+                break;
             case TRINEO:
-                return new Trineo();
-
+                entidad = new Trineo();
+                break;
             case INTERROGANTE:
-                return null;
-
-            default:
-                throw new IllegalArgumentException("Tipo de casilla desconocido: " + tipo);
+                entidad = null;
+                break;
         }
     }
 
     public String getSimbolo() {
-        return (entidad != null) ? entidad.getSimbolo() : "❓";
+        if (entidad != null) {
+            return entidad.getSimbolo();
+        } else {
+            return "❓";
+        }
     }
 
     public String getDescripcion() {
-        return (entidad != null)
-                ? entidad.getDescripcion()
-                : "Casilla misteriosa";
+        if (entidad != null) {
+            return entidad.getDescripcion();
+        } else {
+            return "Casilla misteriosa";
+        }
     }
 
     public TipoCasilla getTipo() {

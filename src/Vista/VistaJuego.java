@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.application.Platform;
-
 import Controladores.*;
 import Modelo.*;
 
@@ -15,10 +15,8 @@ public class VistaJuego {
 
     private VistaJavaFX principal;
     private VBox vista;
-
     private Button btnLanzarDado;
     private Label dadoLabel;
-
     private boolean juegoActivo = false;
 
     public VistaJuego(VistaJavaFX principal) {
@@ -27,127 +25,122 @@ public class VistaJuego {
     }
 
     private void crearVista() {
-
-        vista = new VBox(10);
+        vista = new VBox(15);
         vista.setAlignment(Pos.CENTER);
-        vista.setPadding(new Insets(10));
+        vista.setPadding(new Insets(15));
+        vista.setStyle("-fx-background-color: #ffb74d; -fx-background-radius: 15;");
+        vista.setPrefWidth(260);
 
-        Label titulo = new Label("LANZAR DADO");
-        titulo.setFont(new Font(16));
+        Label titulo = new Label("🎲 LANZAR DADO");
+        titulo.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        titulo.setStyle("-fx-text-fill: white;");
 
         dadoLabel = new Label("🎲");
-        dadoLabel.setFont(new Font(40));
+        dadoLabel.setFont(Font.font("Segoe UI Emoji", 60));
+        dadoLabel.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 10;");
 
-        btnLanzarDado = new Button("Lanzar dado");
+        btnLanzarDado = new Button("LANZAR DADO");
+        btnLanzarDado.setStyle("-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 25;");
         btnLanzarDado.setDisable(true);
-
         btnLanzarDado.setOnAction(e -> lanzarDado());
 
         vista.getChildren().addAll(titulo, dadoLabel, btnLanzarDado);
     }
 
-    // 🔥 DADO REAL CON TU MODELO
     public void lanzarDado() {
-
         if (!juegoActivo) return;
 
-        ControladorTurnos turnos = principal.getControladorTurnos();
-        Jugador jugador = turnos.getJugadorActual();
+        ControladorTurnos controladorTurnos = principal.getControladorTurnos();
+        ControladorEventos controladorEventos = principal.getControladorJuego().getControladorEventos();
+        Jugador jugador = controladorTurnos.getJugadorActual();
 
         if (jugador == null) return;
 
         btnLanzarDado.setDisable(true);
+        principal.getVistaEventos().agregarEvento("🎲 Turno de: " + jugador.getNombre());
 
         animarDado(() -> {
-
-            // ✔ USAMOS TU MÉTODO REAL
-            int dado = jugador.lanzarDado();
-
+            int dado = (int)(Math.random() * 6) + 1;
             dadoLabel.setText(getDadoEmoji(dado));
 
             int origen = jugador.getPosicion();
-            int destino = origen + dado;
+            int destino = Math.min(origen + dado, 49);
 
-            if (destino > 49) destino = 49;
+            principal.getVistaEventos().agregarEvento("🎲 " + jugador.getNombre() + " sacó un " + dado);
 
             VistaTableroConImagenes tablero = principal.getVistaTablero();
 
             tablero.animarMovimiento(jugador, origen, destino, () -> {
-
                 jugador.setPosicion(destino);
+                principal.getVistaEventos().agregarEvento("📍 " + jugador.getNombre() + " está en casilla " + (destino + 1));
 
-                // 🔗 CONTROLADOR EVENTOS REAL
-                ControladorEventos eventos =
-                        principal.getControladorJuego().getControladorEventos();
+                Casilla casilla = principal.getControladorTablero().getCasilla(destino);
+                String mensaje = controladorEventos.procesarCasilla(jugador, casilla);
+                if (mensaje != null && !mensaje.isEmpty()) {
+                    principal.getVistaEventos().agregarEvento(mensaje);
+                }
 
-                Casilla casilla =
-                        principal.getControladorTablero().getCasilla(destino);
+                tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
+                principal.getVistaJugador().actualizar(controladorTurnos);
 
-                String mensaje = eventos.procesarCasilla(jugador, casilla);
+                if (destino == 49) {
+                    principal.getVistaEventos().agregarEvento("🎉 ¡" + jugador.getNombre() + " HA GANADO! 🎉");
+                    juegoActivo = false;
+                    btnLanzarDado.setDisable(true);
+                    return;
+                }
 
-                // 🔗 VISTA EVENTOS
-                principal.getVistaEventos().agregarEvento(mensaje);
-
-                // 🔗 ACTUALIZAR TABLERO
-                tablero.actualizarPosiciones(principal.getControladorJugador());
-
-                // 🔗 ACTUALIZAR INFO JUGADOR
-                principal.getVistaJugador().actualizar(turnos);
-
-                // 🔁 SIGUIENTE TURNO
-                turnos.siguienteTurno();
-                principal.getVistaJugador().actualizar(turnos);
+                controladorTurnos.siguienteTurno();
+                principal.getVistaJugador().actualizar(controladorTurnos);
+                principal.getVistaEventos().agregarEvento("➡️ Siguiente: " + controladorTurnos.getJugadorActual().getNombre());
 
                 btnLanzarDado.setDisable(false);
+
+                if (controladorTurnos.getJugadorActual().esIA()) {
+                    lanzarDadoIA();
+                }
             });
         });
     }
 
-    // 🎲 animación visual del dado
-    private void animarDado(Runnable callback) {
-
+    public void lanzarDadoIA() {
         new Thread(() -> {
-
-            for (int i = 0; i < 6; i++) {
-
-                int num = (int)(Math.random() * 6) + 1;
-
-                Platform.runLater(() ->
-                        dadoLabel.setText(getDadoEmoji(num))
-                );
-
-                try {
-                    Thread.sleep(100);
-                } catch (Exception ignored) {}
-            }
-
-            Platform.runLater(callback);
-
+            try { Thread.sleep(1500); } catch (Exception e) {}
+            Platform.runLater(() -> {
+                if (juegoActivo) lanzarDado();
+            });
         }).start();
     }
 
-    // 🎲 emojis del dado
-    private String getDadoEmoji(int num) {
+    private void animarDado(Runnable callback) {
+        new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                int num = (int)(Math.random() * 6) + 1;
+                Platform.runLater(() -> dadoLabel.setText(getDadoEmoji(num)));
+                try { Thread.sleep(70); } catch (Exception e) {}
+            }
+            Platform.runLater(callback);
+        }).start();
+    }
 
-        switch (num) {
+    private String getDadoEmoji(int num) {
+        switch(num) {
             case 1: return "⚀";
             case 2: return "⚁";
             case 3: return "⚂";
             case 4: return "⚃";
             case 5: return "⚄";
             case 6: return "⚅";
+            default: return "🎲";
         }
-
-        return "🎲";
     }
 
-    public VBox getVista() {
-        return vista;
-    }
+    public VBox getVista() { return vista; }
 
     public void mostrar() {
         juegoActivo = true;
         btnLanzarDado.setDisable(false);
+        dadoLabel.setText("🎲");
     }
 
     public void ocultar() {
