@@ -59,7 +59,7 @@ public class VistaJugador {
      * MÉTODO CLAVE: Este método "mapea" los datos del Modelo a la Vista.
      * Se llama cada vez que alguien mueve o cambia el turno.
      */
-    public void actualizar(ControladorTurnos controladorTurnos) {
+    public void actualizar(controladorTurnos controladorTurnos) {
         // Si no hay partida activa, limpiamos los textos
         if (controladorTurnos == null || controladorTurnos.getJugadorActual() == null) {
             limpiar();

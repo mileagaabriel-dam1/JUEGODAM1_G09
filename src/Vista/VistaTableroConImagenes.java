@@ -40,7 +40,7 @@ public class VistaTableroConImagenes {
     /**
      * Dibuja el tablero por primera vez basándose en el Modelo
      */
-    public void inicializarTablero(ControladorTablero controladorTablero) {
+    public void inicializarTablero(controladorTablero controladorTablero) {
         tableroGrid.getChildren().clear(); // Limpiamos por si había una partida previa
 
         for (int i = 0; i < 50; i++) {
@@ -88,7 +88,7 @@ public class VistaTableroConImagenes {
     /**
      * Borra las fichas de las casillas y las vuelve a pintar en sus nuevas posiciones
      */
-    public void actualizarPosiciones(ControladorJugador controladorJugador, ControladorTurnos controladorTurnos) {
+    public void actualizarPosiciones(controladorJugador controladorJugador, controladorTurnos controladorTurnos) {
         // 1. Limpiamos las fichas antiguas (borramos el 3er elemento de cada StackPane si existe)
         for (StackPane casilla : casillas) {
             while (casilla.getChildren().size() > 2) {

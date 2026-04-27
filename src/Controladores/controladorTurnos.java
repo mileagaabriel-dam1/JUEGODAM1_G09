@@ -3,14 +3,14 @@ package Controladores;
 import Modelo.Jugador;
 import java.util.List;
 
-public class ControladorTurnos {
+public class controladorTurnos {
 
     // Lista de la gente que está echando la partida
     private List<Jugador> jugadores;
     // Un número (0, 1, 2...) que nos dice a quién le toca según su posición en la lista
     private int turnoActual;
 
-    public ControladorTurnos() {
+    public controladorTurnos() {
         // Al empezar, el turno siempre es para el primero (el de la posición 0)
         this.turnoActual = 0;
     }

@@ -3,13 +3,13 @@ package Controladores;
 import Modelo.Tablero;
 import Modelo.Casilla;
 
-public class ControladorTablero {
+public class controladorTablero {
 
     // La variable donde guardamos el mapa del juego
     private Tablero tablero;
 
     // Al crear el controlador, creamos el objeto Tablero (el que tiene las casillas)
-    public ControladorTablero() {
+    public controladorTablero() {
         this.tablero = new Tablero();
     }
 

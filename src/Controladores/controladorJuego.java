@@ -1,40 +1,40 @@
 package Controladores;
 
-public class ControladorJuego {
+public class controladorJuego {
 
     // Ponemos 'private' para que nadie de fuera nos toque estas variables por error.
     // Solo se pueden usar dentro de esta clase.
-    private ControladorTablero controladorTablero;
-    private ControladorJugador controladorJugador;
-    private ControladorTurnos controladorTurnos;
-    private ControladorEventos controladorEventos;
+    private controladorTablero controladorTablero;
+    private controladorJugador controladorJugador;
+    private controladorTurnos controladorTurnos;
+    private controladorEventos controladorEventos;
 
     // Este es el constructor. Es lo que se ejecuta primero para "encender" todo.
-    public ControladorJuego() {
+    public controladorJuego() {
         // Usamos 'this' para referirnos a las variables de arriba y darles valor con 'new'
-        this.controladorTablero = new ControladorTablero();
-        this.controladorJugador = new ControladorJugador();
-        this.controladorTurnos = new ControladorTurnos();
-        this.controladorEventos = new ControladorEventos();
+        this.controladorTablero = new controladorTablero();
+        this.controladorJugador = new controladorJugador();
+        this.controladorTurnos = new controladorTurnos();
+        this.controladorEventos = new controladorEventos();
     }
 
     // Estos son los 'Getters'. 
     // Como las variables de arriba son privadas, usamos estos métodos 
     // 'public' para poder pedirlas desde otras clases de forma segura.
 
-    public ControladorTablero getControladorTablero() {
+    public controladorTablero getControladorTablero() {
         return controladorTablero;
     }
 
-    public ControladorJugador getControladorJugador() {
+    public controladorJugador getControladorJugador() {
         return controladorJugador;
     }
 
-    public ControladorTurnos getControladorTurnos() {
+    public controladorTurnos getControladorTurnos() {
         return controladorTurnos;
     }
 
-    public ControladorEventos getControladorEventos() {
+    public controladorEventos getControladorEventos() {
         return controladorEventos;
     }
 }

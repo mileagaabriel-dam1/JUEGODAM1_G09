@@ -12,10 +12,10 @@ import Controladores.*;
 public class VistaJavaFX extends Application {
 
     // 1. CONTROLADORES: Las conexiones con la lógica del juego
-    private ControladorJuego controladorJuego;
-    private ControladorTablero controladorTablero;
-    private ControladorJugador controladorJugador;
-    private ControladorTurnos controladorTurnos;
+    private controladorJuego controladorJuego;
+    private controladorTablero controladorTablero;
+    private controladorJugador controladorJugador;
+    private controladorTurnos controladorTurnos;
 
     // 2. LAYOUT: El contenedor principal (el lienzo)
     private BorderPane root;
@@ -30,7 +30,7 @@ public class VistaJavaFX extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Inicializamos los controladores (la lógica)
-        controladorJuego = new ControladorJuego();
+        controladorJuego = new controladorJuego();
         controladorTablero = controladorJuego.getControladorTablero();
         controladorJugador = controladorJuego.getControladorJugador();
         controladorTurnos = controladorJuego.getControladorTurnos();
@@ -114,10 +114,10 @@ public class VistaJavaFX extends Application {
     }
 
     // Getters para que las sub-vistas puedan acceder a la lógica
-    public ControladorJuego getControladorJuego() { return controladorJuego; }
-    public ControladorTablero getControladorTablero() { return controladorTablero; }
-    public ControladorJugador getControladorJugador() { return controladorJugador; }
-    public ControladorTurnos getControladorTurnos() { return controladorTurnos; }
+    public controladorJuego getControladorJuego() { return controladorJuego; }
+    public controladorTablero getControladorTablero() { return controladorTablero; }
+    public controladorJugador getControladorJugador() { return controladorJugador; }
+    public controladorTurnos getControladorTurnos() { return controladorTurnos; }
     public VistaTableroConImagenes getVistaTablero() { return vistaTablero; }
     public VistaJugador getVistaJugador() { return vistaJugador; }
     public VistaEventos getVistaEventos() { return vistaEventos; }

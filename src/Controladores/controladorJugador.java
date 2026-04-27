@@ -5,13 +5,13 @@ import Modelo.TipoJugador;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ControladorJugador {
+public class controladorJugador {
 
     // Lista privada para guardar a los jugadores. Usamos List para que sea flexible.
     private List<Jugador> jugadores;
 
     // El constructor: simplemente prepara la lista vacía (el ArrayList)
-    public ControladorJugador() {
+    public controladorJugador() {
         this.jugadores = new ArrayList<>();
     }
 

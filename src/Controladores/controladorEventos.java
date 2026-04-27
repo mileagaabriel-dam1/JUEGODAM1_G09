@@ -2,7 +2,7 @@ package Controladores;
 
 import Modelo.*;
 
-public class ControladorEventos {
+public class controladorEventos {
 
     // Este es el método que se activa cuando el jugador cae en una casilla
     public String procesarCasilla(Jugador jugador, Casilla casilla) {

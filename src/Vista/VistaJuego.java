@@ -55,8 +55,8 @@ public class VistaJuego {
     public void lanzarDado() {
         if (!juegoActivo) return;
 
-        ControladorTurnos controladorTurnos = principal.getControladorTurnos();
-        ControladorEventos controladorEventos = principal.getControladorJuego().getControladorEventos();
+        controladorTurnos controladorTurnos = principal.getControladorTurnos();
+        controladorEventos controladorEventos = principal.getControladorJuego().getControladorEventos();
         Jugador jugador = controladorTurnos.getJugadorActual();
 
         if (jugador == null) return;
