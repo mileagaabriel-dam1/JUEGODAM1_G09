@@ -1,35 +1,49 @@
-package Controladores;
+package Controladores; 
+//Indicamos que esta clase gestiona la lógica dentro del paquete Controladores
 
-import Modelo.Tablero;
-import Modelo.Casilla;
+import Modelo.Tablero; 
+//Importamos la clase Tablero del Modelo para poder crear el mapa
 
-public class controladorTablero {
+import Modelo.Casilla; 
+//Importamos la clase Casilla para saber qué estamos pisando
 
-    // La variable donde guardamos el mapa del juego
+public class controladorTablero { 
+	//Definimos la clase que controlará todo lo referente al escenario del juego
+
+    //Declaramos el atributo privado 'tablero'. Solo este controlador puede manejarlo directamente.
     private Tablero tablero;
 
-    // Al crear el controlador, creamos el objeto Tablero (el que tiene las casillas)
+    //Constructor de la clase, se ejecuta al iniciar el controlador del tablero
     public controladorTablero() {
+    	
+        //Al instanciar esta clase, creamos automáticamente el objeto Tablero (el mapa de casillas)
         this.tablero = new Tablero();
     }
 
-    // Sirve para preguntar: "¿Oye, qué hay en la casilla número X?"
+    //Método público para obtener una casilla específica pasando su índice por parámetro
     public Casilla getCasilla(int posicion) {
+    	
+        //Llama al método del modelo para devolver la información de esa posición concreta
         return tablero.getCasilla(posicion);
     }
 
-    // Este llama al método del modelo para pintar el tablero por consola
     public void mostrarTablero() {
+    	
+        //Delega la responsabilidad de "dibujarse" al propio objeto tablero
         tablero.mostrarTablero();
     }
 
-    // Para saber cuánto mide el tablero (cuántas casillas hay en total)
+    //Método que devuelve la longitud total del camino del juego
     public int getTamanoTablero() {
+    	
+        //Consulta al modelo cuántas casillas tiene el tablero en total
         return tablero.getTamano();
     }
 
-    // Getter para pasarle el objeto tablero entero a quien lo necesite
+    //Getter estándar para obtener la instancia completa del objeto tablero
     public Tablero getTablero() {
+    	
+        //Permite que otras clases (como la Vista) accedan a los datos del mapa
         return tablero;
     }
-}
+} //Fin de la clase controladorTablero

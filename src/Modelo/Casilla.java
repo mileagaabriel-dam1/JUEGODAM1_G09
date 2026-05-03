@@ -1,68 +1,94 @@
-package Modelo;
+package Modelo; 
+//Definimos que esta clase forma parte de la capa de datos (Modelo)
 
-public class Casilla {
+public class Casilla { 
+	//Clase que representa cada una de las posiciones del tablero
 
-    // Atributos privados: la posición, el tipo (de un Enum) y lo que hay dentro
-    private int posicion;
-    private TipoCasilla tipo;
-    private Entidad entidad;
+    //Atributos privados para cumplir con el encapsulamiento
+    private int posicion;      
+    //El número de orden de la casilla (0, 1, 2...)
+    
+    private TipoCasilla tipo;  
+    //El tipo de casilla (usando el Enum TipoCasilla)
+    
+    private Entidad entidad;   
+    //El objeto (Oso, Pingüino, etc.) que esta en esta casilla
 
-    // El constructor: cuando creamos una casilla, le decimos su número y qué va a ser
+    //Constructor, se usa al generar el tablero para configurar cada casilla
     public Casilla(int posicion, TipoCasilla tipo) {
-        this.posicion = posicion;
-        this.tipo = tipo;
+        this.posicion = posicion; 
+        //Asignamos la ubicación física en el mapa
+        
+        this.tipo = tipo;         
+        //Que tipo de casilla es??, lo que salga se le asignara a esa casilla.
 
-        // Según el tipo que nos pasen, metemos un objeto u otro dentro de la casilla
+        //Usamos un switch para instanciar la entidad correspondiente según el tipo recibido
         switch (tipo) {
             case PINGUINO:
-                entidad = new Pinguino();
+                entidad = new Pinguino(); 
+                //Si el tipo es PINGUINO, creamos el objeto Pinguino 
                 break;
+                
             case OSO:
-                entidad = new Oso();
+                entidad = new Oso();      
+                //Si es OSO, metemos un "enemigo" en la casilla
                 break;
+                
             case AGUJERO:
-                entidad = new AgujeroHielo();
+                entidad = new AgujeroHielo(); 
+                //Añadimos un obstáculo de caída
                 break;
+                
             case TRINEO:
-                entidad = new Trineo();
+                entidad = new Trineo();   
+                //Añadimos un objeto de ayuda
                 break;
+                
             case INTERROGANTE:
-                // Las de "?" no tienen entidad fija porque el premio se elige al azar luego
+                //Las casillas de evento aleatorio no tienen una entidad fija al inicio,
+                //por eso dejamos la variable en null.
                 entidad = null;
                 break;
         }
     }
 
-    // Método para sacar el icono (el emoji) que se verá en el tablero
+    //Método para obtener la el simbolo visual de la casilla
     public String getSimbolo() {
         if (entidad != null) {
-            // Si hay algo dentro (oso, pingüino...), que nos dé su símbolo
+            //Si la casilla tiene una entidad, le pedimos a ella su propio icono (polimorfismo)
             return entidad.getSimbolo();
         } else {
-            // Si está vacía o es interrogante, ponemos el símbolo por defecto
+            // Si está vacía o es un evento (null), devolvemos el símbolo de la duda
             return "❓";
         }
     }
 
-    // Para que el juego nos diga qué hace esa casilla si caemos en ella
+    // Método para describir el efecto de la casilla al jugador
     public String getDescripcion() {
         if (entidad != null) {
+            //Si hay entidad, ella nos dice qué hace (ej: "Retrocedes 3 casillas")
             return entidad.getDescripcion();
         } else {
+            //Texto por defecto para las casillas de tipo interrogante
             return "Casilla misteriosa";
         }
     }
 
-    // Getters estándar para que los controladores puedan cotillear qué hay en la casilla
+    //Getters para permitir que los controladores consulten el estado de la casilla
+    
     public TipoCasilla getTipo() {
-        return tipo;
+        return tipo; 
+        //Devuelve si es OSO, AGUJERO, etc.
     }
 
     public int getPosicion() {
-        return posicion;
+        return posicion; 
+        //Devuelve el número de la casilla
     }
 
     public Entidad getEntidad() {
-        return entidad;
+        return entidad; 
+        //Devuelve el objeto contenido (para interactuar con él)
     }
-}
+} 
+//Fin de la clase Casilla

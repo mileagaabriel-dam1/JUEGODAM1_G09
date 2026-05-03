@@ -1,86 +1,112 @@
-package Controladores;
+package Controladores; // Indicamos que esta clase vive en el paquete de Controladores
 
-import Modelo.*;
+import Modelo.*; 
+//Importamos todas las clases del modelo (Jugador, Casilla, etc.) para poder usarlas
 
-public class controladorEventos {
+public class controladorEventos { 
+	//Definición de la clase que gestionará la lógica de las casillas
 
-    // Este es el método que se activa cuando el jugador cae en una casilla
     public String procesarCasilla(Jugador jugador, Casilla casilla) {
+    //Este método gestiona qué ocurre cuando un jugador cae en una casilla concreta
 
-        Entidad entidad = null;
-        String mensaje = "";
 
-        // Miramos qué hay en la casilla con un switch de toda la vida
+        Entidad entidad = null; 
+        //Declaramos una variable de tipo Entidad (clase padre) para aplicar polimorfismo
+        
+        String mensaje = ""; 
+        //Variable auxiliar para guardar el texto que devolveremos a la interfaz
+
         switch(casilla.getTipo()) {
+        //Usamos un switch para ejecutar una lógica distinta según el tipo de casilla (Enum)
+
             case PINGUINO:
-                entidad = new Pinguino(); // Aparece un pingüino
+                entidad = new Pinguino(); 
+                //Si es pingüino, instanciamos un objeto de su clase
                 break;
 
             case OSO:
-                entidad = new Oso(); // ¡Peligro! Un oso
+                entidad = new Oso(); 
+                //Si es oso, creamos la instancia del enemigo
                 break;
 
             case AGUJERO:
-                entidad = new AgujeroHielo();
+                entidad = new AgujeroHielo(); 
+                //Obstáculo de tipo agujero
                 break;
 
             case TRINEO:
-                entidad = new Trineo();
+                entidad = new Trineo(); 
+                //Objeto de transporte o ventaja
                 break;
 
             case INTERROGANTE:
-                // Si cae en el ?, llamamos al sorteo de abajo y salimos de aquí
+                //Si la casilla es de evento aleatorio, llamamos al método interno y devolvemos su resultado
                 return eventoAleatorio(jugador);
         }
 
-        // Si la casilla tenía algo (oso, pingüino, etc.), hacemos que pase algo
         if (entidad != null) {
+            //Si la casilla no estaba vacía (entidad no es null), ejecutamos la interacción
+
             mensaje = entidad.interactuar(jugador);
+            //Gracias al polimorfismo, se ejecuta el método interactuar de la clase hija específica
+
         }
 
-        return mensaje;
+        return mensaje; 
+        //Devolvemos el mensaje final para mostrarlo en el log del juego
     }
 
-    // Aquí es donde se reparte la suerte (buena o mala)
     private String eventoAleatorio(Jugador jugador) {
+        //Método privado para gestionar la lógica de azar cuando se cae en una casilla '?'
+
     	
-        // Sacamos un número al azar entre 0 y 4 (típica fórmula de clase)
         int evento = (int)(Math.random() * 5);
-        String mensaje = "  ❓ ";
+        //Generamos un número entero aleatorio entre 0 y 4 usando casting a (int)
+
+        String mensaje = "  ❓ "; 
+        //Icono visual para el mensaje de evento
 
         switch(evento) {
+        //Evaluamos el número obtenido para decidir qué premio o castigo recibe el jugador
+
             case 0:
                 mensaje += "¡Evento: Encuentras un pez!";
-                jugador.getInventario().agregarPez(); // Directo a la mochila
+                jugador.getInventario().agregarPez(); 
+                //Accedemos al inventario del jugador para sumar un objeto
                 break;
 
             case 1:
                 mensaje += "¡Evento: Encuentras bolas de nieve!";
-                jugador.getInventario().agregarBolaNieve();
+                jugador.getInventario().agregarBolaNieve(); 
+                //Aumentamos la "munición" del jugador
                 break;
 
             case 2:
                 mensaje += "¡Evento: Ganas un dado extra!";
-                jugador.getInventario().agregarDado(); // Dopamos al jugador
+                jugador.getInventario().agregarDado(); 
+                //Modificamos la cantidad de dados disponibles
                 break;
 
             case 3:
-                // Ojo: solo le quitamos un dado si tiene más de uno (para no dejarlo sin jugar)
+                //Verificamos que el jugador tenga más de un dado antes de quitarle uno (regla de negocio)
                 if (jugador.getInventario().getDados() > 1) {
                     mensaje += "¡Evento: Pierdes un dado!";
                     jugador.getInventario().quitarDado();
                 } else {
+                    //Si solo tiene uno, no se le quita para que pueda seguir jugando
                     mensaje += "¡Evento: Casi pierdes un dado!";
                 }
                 break;
 
             case 4:
-                // En este evento te sale una foca de repente
+                //Evento especial donde aparece una foca dinámicamente
                 Foca foca = new Foca();
-                mensaje = foca.interactuar(jugador);
+                mensaje = foca.interactuar(jugador); 
+                //La foca interactúa directamente con el jugador
                 break;
         }
 
-        return mensaje;
+        return mensaje; 
+        //Retornamos el resultado del evento aleatorio
     }
 }

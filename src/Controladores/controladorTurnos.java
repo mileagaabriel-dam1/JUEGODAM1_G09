@@ -1,50 +1,83 @@
-package Controladores;
+package Controladores; 
+//Indicamos que esta clase pertenece al paquete de Controladores
 
-import Modelo.Jugador;
-import java.util.List;
+import Modelo.Jugador; 
+//Importamos la clase Jugador porque necesitamos gestionar sus turnos
 
-public class controladorTurnos {
+import java.util.List; 
+//Importamos List para manejar la colección de participantes
 
-    // Lista de la gente que está echando la partida
+public class controladorTurnos { 
+	//Clase encargada de gestionar el flujo y el orden de la partida
+
+    //Atributo privado que guarda la lista de jugadores que están en la partida
     private List<Jugador> jugadores;
-    // Un número (0, 1, 2...) que nos dice a quién le toca según su posición en la lista
+    
+    //Índice numérico que representa la posición en la lista del jugador que tiene el turno
     private int turnoActual;
 
+    //Constructor del controlador
     public controladorTurnos() {
-        // Al empezar, el turno siempre es para el primero (el de la posición 0)
+        //Al iniciar la clase, el turno comienza siempre en el primer jugador (índice 0)
         this.turnoActual = 0;
     }
 
-    // Este método sirve para meter a los jugadores en el gestor de turnos y resetear a 0
+    //Método para vincular la lista de jugadores con este gestor y reiniciar el contador
     public void setJugadores(List<Jugador> jugadores) {
-        this.jugadores = jugadores;
-        this.turnoActual = 0;
+    	
+        this.jugadores = jugadores; 
+        //Asignamos la lista que nos pasan desde el controlador principal
+        
+        this.turnoActual = 0; 
+        //Reiniciamos el turno al principio para evitar errores de índice
     }
 
-    // Para saber quién es el que tiene que mover el muñeco ahora mismo
+    //Método para obtener el objeto Jugador que debe realizar su acción ahora mismo
     public Jugador getJugadorActual() {
-        // Comprobamos que haya gente en la lista para que no nos de un error de "null"
+    	
+        //Validación de seguridad, comprobamos que la lista existe y no está vacía
         if (jugadores != null && !jugadores.isEmpty()) {
+        	
+            //Accedemos a la lista usando el índice del turno actual
             return jugadores.get(turnoActual);
         }
-        return null;
+        return null; 
+        //Si no hay jugadores, devolvemos null para evitar que el programa explote
     }
 
-    // Este es el método estrella: pasa al siguiente jugador
+    //Método clave para rotar el turno entre los participantes
     public void siguienteTurno() {
+        //Comprobamos de nuevo que haya jugadores para poder operar
+    	
         if (jugadores != null && !jugadores.isEmpty()) {
-            // TRUCO DE CLASE: Usamos el '%' (módulo) para que el turno sea circular.
-            // Si hay 3 jugadores, cuando llegamos al 2 y sumamos 1, el % hace que vuelva al 0.
             turnoActual = (turnoActual + 1) % jugadores.size();
+            //A ver, sencillo, estas lineas son para controlar el orden de los jugadores.
+            //Es una lógica circular, no la hemos dado en clase.
+            
+            //Pero es muy simple, en vez de usar varios If, que quedaria feisimo, porque no recortarlo, a 2 lineas.
+            //Para esto se ha usado el "operador módulo %", que hace esto?
+               //Esto basicamente mantiene los turnos dentro del rango de tamaño.
+            
+            //Hay 3 jugadores?, pues 3 turnos, ni mas, ni menos.
+            //Los turnos se van sumando, "1+1...", comenzando desde 0, pero cuando llega, al 3 turno, es decir, "2+1" si hay 3 jugadores, pues lo divide por el
+            //tamaño de jugadores que hemos puesto antes, es decir 3. 3%3 = 1, sobran 0, vuelve al turno 0.
+            
+            //Si hay 2 jugadores, pues lo mismo. pero dividido por 2.
+
         }
     }
 
-    // Getters básicos para sacar información del turno
+    //Getter para obtener la lista completa de jugadores que están bajo el control de turnos
     public List<Jugador> getJugadores() {
-        return jugadores;
+    	
+        return jugadores; 
+        //Retornamos la referencia a la lista
     }
     
+    //Getter para saber el índice numérico del turno en el que nos encontramos
     public int getTurnoActual() {
-        return turnoActual;
+    	
+        return turnoActual; 
+        //Retornamos el valor entero
     }
-}
+} //Fin de la clase controladorTurnos

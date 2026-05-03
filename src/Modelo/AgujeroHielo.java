@@ -1,35 +1,41 @@
-package Modelo;
+package Modelo; 
+//Definimos que esta clase pertenece a la capa del Modelo (datos y lógica de objetos)
 
-// El 'implements Entidad' significa que esta clase tiene que cumplir las normas 
-// que pusimos en la interfaz Entidad (tener nombre, símbolo, etc.)
+//La palabra 'implements Entidad' indica que esta clase hereda el contrato de la interfaz Entidad.
+//Esto nos obliga a escribir los métodos getNombre, getSimbolo, etc.
 public class AgujeroHielo implements Entidad {
 
-    @Override
+    @Override 
     public String getNombre() { 
         return "Agujero de Hielo"; 
+        //Bueno esto no requiere comentario explicando lo que hace, y que es el override, no?
     }
     
-    @Override
+    @Override 
     public String getSimbolo() { 
-        // El dibujito que saldrá en el tablero
         return "🕳️"; 
     }
 
-    @Override
+    @Override 
     public String getDescripcion() {
         return "Has caído en un agujero, retrocedes 3 casillas";
     }
 
-    // Aquí es donde se decide qué le pasa al jugador cuando pisa el agujero
+    //Este es el método más importante, ejecuta la lógica de "castigo" sobre el jugador
     @Override
     public String interactuar(Jugador jugador) {
-        // Calculamos la nueva posición: la actual menos 3.
-        // Usamos Math.max(0, ...) para que si está al principio no retroceda a posiciones negativas (que petaría el juego)
         int nuevaPos = Math.max(0, jugador.getPosicion() - 3);
+        //Calculamos la posición de destino restando 3 a la actual.
+        //Usamos Math.max(0, ...) como escudo, si el jugador está en la casilla 2 y resta 3,
+        //daría -1 (error). Math.max elige el número más alto entre 0 y el resultado, evitando posiciones negativas.
+
         
-        // Movemos al jugador físicamente a su nueva casilla
         jugador.setPosicion(nuevaPos);
-        
-        return "  Te has caído en un agujero. Retrocedes 3 casillas";
+        //Actualizamos la posición del objeto jugador con el nuevo valor calculado
+
+        return "Te has caído en un agujero. Retrocedes 3 casillas";
+        //Devolvemos el texto informativo que el controlador mostrará por pantalla
+
     }
-}
+} 
+//Fin de la clase AgujeroHielo
