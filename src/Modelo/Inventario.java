@@ -16,7 +16,7 @@ public class Inventario {
     private static final int MAX_BOLAS = 6;
     private static final int MAX_DADOS = 3;
     //Explicación de que es "static final", bueno ya esta arriba, pero basicamente es un valor fijo, ni mas, ni menos.
-    //Si esto dice que el MAX_PECES son 2, MAX_BOLAS son 6, y MAX_DADOS son 3
+    //Si esto dice que el MAX_PECES son 2, MAX_BOLAS son 6, y MAX_DADOS son 3, sera asi.
 
     //Constructor, prepara la mochila al empezar el juego
     public Inventario() {
