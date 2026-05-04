@@ -1,114 +1,185 @@
-package Vista;
+package Vista; 
+//Carpeta donde vive el archivo
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.application.Platform;
-import Controladores.*;
-import Modelo.*;
+//IMPORTS, Nuestras herramientas de construcción 
+
+import javafx.geometry.Insets;         
+//Para dar "aire" (márgenes) dentro del panel
+
+import javafx.geometry.Pos;            
+//Para centrar el botón y el dado
+
+import javafx.scene.control.Button;    
+//El componente botón
+
+import javafx.scene.control.Label;     
+//Para textos y mostrar el emoji del dado
+
+import javafx.scene.layout.VBox;       
+//Organizador vertical (uno encima de otro)
+
+import javafx.scene.text.Font;         
+//Para cambiar el tamaño de la letra
+
+import javafx.scene.text.FontWeight;   
+//Para poner letras en negrita
+
+import javafx.application.Platform;    
+//Muy importante Permite que los hilos externos toquen la interfaz
+
+import Controladores.*;                
+//Acceso a la lógica (turnos, eventos)
+
+import Modelo.*;                     
+//Acceso a los datos (Jugador, Casilla)
 
 public class VistaJuego {
 
-    private VistaJavaFX principal;
-    private VBox vista;
-    private Button btnLanzarDado;
-    private Label dadoLabel;
-    private boolean juegoActivo = false;
+    //ATRIBUTOS, Lo que este panel necesita recordar
+	
+    private VistaJavaFX principal;     
+    //Referencia a la ventana madre
+    //PRINCIPAL se va a usar mas en este codigo, ya que se refiere a VistaJavaFX
+    
+    
+    private VBox vista;                
+    //El contenedor naranja que agrupa todo
+    
+    private Button btnLanzarDado;      
+    //El botón de acción
+    
+    private Label dadoLabel;           
+    //El recuadro donde sale el dibujo del dado
+    
+    private boolean juegoActivo = false; 
+    //Interruptor para saber si se puede tirar o no
 
+    //Constructor, Recibe la ventana principal y monta el diseño
     public VistaJuego(VistaJavaFX principal) {
         this.principal = principal;
         crearVista();
     }
 
+    //Define cómo se ve el panel del dado (Colores, tamaños, fuentes)
+    
     private void crearVista() {
-        // Contenedor principal con fondo naranja (#ffb74d) y bordes redondeados
+        //Creamos la caja vertical con 15px de separación entre elementos
         vista = new VBox(15);
-        vista.setAlignment(Pos.CENTER);
-        vista.setPadding(new Insets(15));
+        vista.setAlignment(Pos.CENTER); 
+        //Todo al centro
+        
+        vista.setPadding(new Insets(15)); 
+        //Margen interno de 15px
+        
+        //Estilo CSS, Fondo naranja, bordes redondeados (15px)
         vista.setStyle("-fx-background-color: #ffb74d; -fx-background-radius: 15;");
-        vista.setPrefWidth(260);
+        vista.setPrefWidth(260); 
+        //Ancho fijo del panel
 
-        Label titulo = new Label("🎲 LANZAR DADO");
+        //Etiqueta de título
+        Label titulo = new Label(" LANZAR DADO");
         titulo.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        titulo.setStyle("-fx-text-fill: white;");
+        titulo.setStyle("-fx-text-fill: white;"); 
+        //Letras blancas
 
-        // Label donde aparecerá el dado girando
+        //El recuadro blanco donde aparece el dado gigante
         dadoLabel = new Label("🎲");
-        dadoLabel.setFont(Font.font("Segoe UI Emoji", 60));
+        dadoLabel.setFont(Font.font("Segoe UI Emoji", 60)); 
+        //Fuente especial para emojis
+        
         dadoLabel.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 10;");
 
-        // Botón con estilo redondeado y llamativo
+        //El botón para tirar
         btnLanzarDado = new Button("LANZAR DADO");
         btnLanzarDado.setStyle("-fx-background-color: #ff9800; -fx-text-fill: white; " +
                                "-fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 25;");
-        btnLanzarDado.setDisable(true); // Empieza desactivado hasta que inicie la partida
+        
+        btnLanzarDado.setDisable(true); 
+        //Bloqueado al inicio (hasta que se pulse "Empezar")
+        
+        //Al pulsar el botón, se ejecuta el método lanzarDado()
         btnLanzarDado.setOnAction(e -> lanzarDado());
 
+        //Añadimos las tres piezas al contenedor vertical
         vista.getChildren().addAll(titulo, dadoLabel, btnLanzarDado);
     }
 
-    // LÓGICA PRINCIPAL DEL TURNO
+    //LÓGICA PRINCIPAL: Qué pasa cuando se tira el dado
+    
     public void lanzarDado() {
+        //Si el juego no ha empezado, no hacemos nada
         if (!juegoActivo) return;
 
+        //Pedimos a la clase principal los controladores y el jugador que tiene el turno
         controladorTurnos controladorTurnos = principal.getControladorTurnos();
         controladorEventos controladorEventos = principal.getControladorJuego().getControladorEventos();
         Jugador jugador = controladorTurnos.getJugadorActual();
 
         if (jugador == null) return;
 
-        btnLanzarDado.setDisable(true); // Bloqueamos el botón para evitar "doble clic"
+        //Bloqueamos el botón inmediatamente para que no pinchen mil veces mientras el dado gira
+        btnLanzarDado.setDisable(true); 
         principal.getVistaEventos().agregarEvento("🎲 Turno de: " + jugador.getNombre());
 
-        // 1. Animamos el dado (efecto visual)
+        //ANIMACIÓN, Empezamos a hacer girar el dado visualmente
         animarDado(() -> {
-            // 2. Calculamos el resultado real
+            //Este bloque se ejecuta cuando la animación termina (gracias al callback)
+            
+            //RESULTADO REAL, Calculamos un número del 1 al 6
             int dado = (int)(Math.random() * 6) + 1;
-            dadoLabel.setText(getDadoEmoji(dado));
+            dadoLabel.setText(getDadoEmoji(dado)); 
+            //Ponemos el dibujo que toca (⚀, ⚁...)
 
-            int origen = jugador.getPosicion();
-            int destino = Math.min(origen + dado, 49);
+            int origen = jugador.getPosicion(); 
+            //Casilla donde está ahora
+            
+            int destino = Math.min(origen + dado, 49); 
+            //Casilla donde irá (máximo la 49)
 
             principal.getVistaEventos().agregarEvento("🎲 " + jugador.getNombre() + " sacó un " + dado);
 
             VistaTableroConImagenes tablero = principal.getVistaTablero();
 
-            // 3. Animamos al pingüino moviéndose por el tablero
+            //MOVIMIENTO, Llamamos al tablero para que mueva al pingüino poco a poco
             tablero.animarMovimiento(jugador, origen, destino, () -> {
-                jugador.setPosicion(destino);
+                
+                //Cuando el pingüino termina de moverse:
+                jugador.setPosicion(destino); // Guardamos su nueva posición en la lógica
                 principal.getVistaEventos().agregarEvento("📍 " + jugador.getNombre() + " está en casilla " + (destino + 1));
 
-                // 4. Procesamos qué hay en la casilla (¿hay oso? ¿trineo?)
+                //EFECTOS, Miramos si la casilla tiene trineo, oso, etc.
                 Casilla casilla = principal.getControladorTablero().getCasilla(destino);
                 String mensaje = controladorEventos.procesarCasilla(jugador, casilla);
+                
                 if (mensaje != null && !mensaje.isEmpty()) {
-                    principal.getVistaEventos().agregarEvento(mensaje);
+                    principal.getVistaEventos().agregarEvento(mensaje); 
+                    //Avisamos si pasó algo extra
                 }
 
-                // 5. Actualizamos toda la interfaz tras el movimiento y efectos
+                //REFRESCAR, Actualizamos los dibujos y los textos del panel lateral
                 tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
                 principal.getVistaJugador().actualizar(controladorTurnos);
 
-                // 6. ¿Ha ganado alguien?
+                //FINAL, ¿Alguien ha llegado a la meta (casilla 49)?
                 if (destino == 49) {
                     principal.getVistaEventos().agregarEvento("🎉 ¡" + jugador.getNombre() + " HA GANADO! 🎉");
-                    juegoActivo = false;
-                    btnLanzarDado.setDisable(true);
+                    juegoActivo = false; 
+                    //Paramos el juego
+                    
+                    btnLanzarDado.setDisable(true); 
+                    //Bloqueamos el botón para siempre
                     return;
                 }
 
-                // 7. Pasamos el turno
+                //SIGUIENTE, Pasamos el turno al siguiente jugador
                 controladorTurnos.siguienteTurno();
                 principal.getVistaJugador().actualizar(controladorTurnos);
                 principal.getVistaEventos().agregarEvento("➡️ Siguiente: " + controladorTurnos.getJugadorActual().getNombre());
 
+                //Desbloqueamos el botón para el siguiente jugador (si es humano)
                 btnLanzarDado.setDisable(false);
 
-                // 8. Si le toca a la IA, llamamos a su método automático
+                //IA, Si el nuevo jugador es una máquina, ella tira sola
                 if (controladorTurnos.getJugadorActual().esIA()) {
                     lanzarDadoIA();
                 }
@@ -116,29 +187,42 @@ public class VistaJuego {
         });
     }
 
-    // Método para que la IA "espere" un poco antes de tirar y no sea instantáneo
+    //Gestiona el turno de la Inteligencia Artificial
+    
     public void lanzarDadoIA() {
+        //Creamos un hilo nuevo para no congelar la pantalla durante la espera
         new Thread(() -> {
-            try { Thread.sleep(1500); } catch (Exception e) {} // Espera 1.5 segundos
-            Platform.runLater(() -> { // Platform.runLater es necesario para tocar la UI desde un hilo
-                if (juegoActivo) lanzarDado();
+            try { 
+                Thread.sleep(1500); 
+                //La IA "se lo piensa" 1,5 segundos (más realista)
+            } catch (Exception e) {} 
+
+            //Platform.runLater manda la orden de vuelta a la pantalla principal
+            Platform.runLater(() -> { 
+                if (juegoActivo) lanzarDado(); 
+                //La IA tira el dado
             });
-        }).start();
+        }).start(); 
+        //Arrancamos el hilo
     }
 
-    // Hilo para que el dado cambie de cara rápidamente antes de dar el resultado
+    //Efecto visual de que el dado está girando
+    
     private void animarDado(Runnable callback) {
         new Thread(() -> {
             for (int i = 0; i < 10; i++) {
                 int num = (int)(Math.random() * 6) + 1;
+                //Actualizamos el dibujo del dado cada 70 milisegundos
                 Platform.runLater(() -> dadoLabel.setText(getDadoEmoji(num)));
                 try { Thread.sleep(70); } catch (Exception e) {}
             }
-            Platform.runLater(callback); // Al terminar, ejecuta la lógica del movimiento
+            //Al terminar las 10 vueltas, ejecutamos la lógica real
+            Platform.runLater(callback);
         }).start();
     }
 
-    // Traduce números a los caracteres especiales de dados
+    //Convierte el número del dado en el símbolo Unicode correspondiente
+    
     private String getDadoEmoji(int num) {
         switch(num) {
             case 1: return "⚀"; case 2: return "⚁"; case 3: return "⚂";
@@ -147,14 +231,17 @@ public class VistaJuego {
         }
     }
 
+    //Devuelve el panel completo para que VistaJavaFX lo ponga a la derecha
     public VBox getVista() { return vista; }
 
+    //Activa el panel al empezar la partida
     public void mostrar() {
         juegoActivo = true;
         btnLanzarDado.setDisable(false);
         dadoLabel.setText("🎲");
     }
 
+    //Desactiva el panel
     public void ocultar() {
         juegoActivo = false;
         btnLanzarDado.setDisable(true);

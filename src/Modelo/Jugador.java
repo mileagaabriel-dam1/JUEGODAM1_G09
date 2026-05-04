@@ -1,67 +1,94 @@
-package Modelo;
+package Modelo; 
+//Forma parte del Modelo porque contiene los datos del usuario
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Jugador {
 
-    // Datos básicos del jugador
+    //Atributos privados, Encapsulamiento puro. Solo el jugador sabe sus secretos.
     private String nombre;
     private String color;
-    private TipoJugador tipo; // HUMANO o IA
-    private int posicion;
-    private Inventario inventario; // Su mochila
-    private List<String> historial; // Para guardar lo que ha ido haciendo
+    private TipoJugador tipo;     
+    //HUMANO o IA (usando otro Enum para evitar errores)
+    
+    private int posicion;         
+    //Su ubicación actual en el tablero
+    
+    private Inventario inventario; 
+    //La instancia de su mochila personalizada
+    
+    private List<String> historial; 
+    //Registro de eventos para saber qué ha hecho el jugador
 
-    // Constructor: crea un jugador desde cero al empezar la partida
+    //Constructor, Define la identidad del jugador al unirse a la partida
     public Jugador(String nombre, String color, TipoJugador tipo) {
         this.nombre = nombre;
         this.color = color;
         this.tipo = tipo;
-        this.posicion = 0; // Todos empiezan en la casilla 0
-        this.inventario = new Inventario(); // Se le da una mochila nueva
-        this.historial = new ArrayList<>(); // Se prepara la lista de sus movimientos
+        this.posicion = 0; 
+        //Randy dice que todos empiezan en la casilla de salida (0)
+        
+        this.inventario = new Inventario(); 
+        //Le entregamos su equipo inicial
+        
+        this.historial = new ArrayList<>(); 
+        //Inicializamos la lista de acciones
     }
 
-    // El método para tirar el dado (genera un número del 1 al 6)
+    //El motor de movimiento, Genera un número aleatorio entre 1 y 6.
+    //Usamos (int)(Math.random() * 6) que da de 0 a 5, y sumamos 1.
+    //Para que no pueda dar 0, que sino, complicado llegar al final
+    
     public int lanzarDado() {
         int resultado = (int) (Math.random() * 6) + 1;
-        registrarAccion("Ha sacado un " + resultado);
+        registrarAccion("Ha sacado un " + resultado); 
+        //Guardamos el evento en su historial
         return resultado;
     }
 
-    // Guarda una frase en el historial del jugador para saber qué le ha pasado
+    //Método para añadir una línea de texto a su diario de a bordo
     public void registrarAccion(String accion) {
         historial.add(accion);
     }
 
-    // --- Getters estándar ---
+    //Getters para que los controladores puedan consultar sus datos
     public String getNombre() { return nombre; }
     public String getColor() { return color; }
     public TipoJugador getTipo() { return tipo; }
     public int getPosicion() { return posicion; }
 
-    // Método importante: cambia la posición pero con "topes" para no romper el juego
+    //SetPosicion con validación (Escudo de seguridad).
+    //Evita que el jugador "se salga del mundo" si una foca o un oso lo empujan demasiado.
+    //Es decir, que no se salga del tablero vamos
+    
     public void setPosicion(int posicion) {
         if (posicion < 0) {
-            this.posicion = 0; // No puede haber posiciones negativas
+            this.posicion = 0; 
+            //Si retrocede de más, se queda en la casilla 0
+            
         } else if (posicion > 49) {
-            this.posicion = 49; // Si el tablero tiene 50 casillas, el tope es la 49
+            this.posicion = 49; 
+            //Si se pasa de la meta (casilla 50), se queda en la última
         } else {
-            this.posicion = posicion;
+            this.posicion = posicion; 
+            //Posición válida dentro del rango
         }
     }
 
+    //Acceso a su mochila
     public Inventario getInventario() {
         return inventario;
     }
 
+    //Acceso a su registro de movimientos
     public List<String> getHistorial() {
         return historial;
     }
 
-    // Método rápido para saber si este jugador es la máquina o una persona
+    //Método boolean rápido para que el controlador sepa si debe esperar un clic o moverlo solo
     public boolean esIA() {
         return tipo == TipoJugador.IA;
     }
-}
+} 
+//Fin de la clase Jugador

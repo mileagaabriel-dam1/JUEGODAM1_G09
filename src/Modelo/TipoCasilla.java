@@ -1,17 +1,25 @@
-package Modelo;
+package Modelo; 
+//Definimos que este Enum forma parte de la lógica de datos
 
-// Un 'enum' es una lista de palabras fijas (constantes).
-// Sirve para que en todo el programa solo existan estos 5 tipos de casillas.
+//Un 'enum' (enumeración) es un tipo especial de clase que define un conjunto de constantes.
+//Sirve para que en todo el programa solo existan estos 5 tipos de casillas, 
+//actuando como un "menú cerrado" para evitar errores de escritura.
 
 public enum TipoCasilla {
 	
-    PINGUINO,     // Casilla de salida/segura
+    PINGUINO,     
+    //Representa la casilla de salida o zonas seguras
     
-    OSO,          // Casilla de peligro
+    OSO,          
+    //Representa los peligros que mandan al jugador al inicio
     
-    AGUJERO,      // Casilla de obstáculo
+    AGUJERO,      
+    //Representa los obstáculos que hacen retroceder posiciones
     
-    TRINEO,       // Casilla de ventaja
+    TRINEO,       
+    //Representa las ventajas que ayudan al jugador a avanzar
     
-    INTERROGANTE  // Casilla de evento aleatorio
-}
+    INTERROGANTE  
+    //Representa los eventos sorpresa o aleatorios
+} 
+//Fin del catálogo de tipos

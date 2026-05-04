@@ -1,31 +1,34 @@
-package Modelo;
+package Modelo; 
 
-// El Oso también es una 'Entidad', así que tiene que tener los 4 métodos obligatorios
+//El Oso es un "empleado" de Randy, así que firma el contrato de Entidad (implements Entidad)
 public class Oso implements Entidad {
 
-    @Override
+    @Override //Cumple la norma de Randy, dar su nombre
     public String getNombre() {
         return "Oso";
     }
 
-    @Override
+    @Override //Es lo mismo que la foca, enseñar su simbolo en el tablero.
     public String getSimbolo() {
-        // El emoji que asustará a los jugadores en el tablero
-        return "🐻";
+        return "🐻"; 
+        //El icono que aparecerá en el tablero
     }
 
-    @Override
+    @Override //Esta obligado a presentarse por "Randy"
     public String getDescripcion() {
         return "El oso te atacará, vuelves al inicio";
     }
 
-    // Lo que pasa cuando el jugador cae en la casilla del Oso
+    //El zarpazo del Oso,
+    //Cuando un jugador cae aquí, el Oso usa el permiso de Randy para
+    //resetear totalmente la posición del jugador.
+    
     @Override
     public String interactuar(Jugador jugador) {
-        // Mandamos al jugador a la casilla 0 directamente
+        //Ejecutamos el castigo máximo, mandamos al objeto jugador a la casilla 0
         jugador.setPosicion(0);
         
-        // Devolvemos el mensaje que se mostrará en el historial o pantalla
-        return "🐻 ¡EL OSO TE HA ATRAPADO! Vuelves al inicio";
+        //,Retornamos el grito de guerra del Oso para que el usuario sepa qué ha pasado
+        return "¡EL OSO TE HA ATRAPADO! Vuelves al inicio";
     }
-}
+} //Fin de la clase Oso

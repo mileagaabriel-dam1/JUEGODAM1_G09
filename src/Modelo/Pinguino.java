@@ -1,27 +1,33 @@
-package Modelo;
+package Modelo; 
 
-// El Pingüino es una 'Entidad' más, aunque sea el bueno de la película
+//El Pingüino también firma el contrato de "Randy" (implements Entidad)
 public class Pinguino implements Entidad {
 
-    @Override
+    @Override //Cumpliendo con Randy, dar su nombre
     public String getNombre() {
         return "Pingüino";
     }
 
-    @Override
+    @Override //Cumpliendo con Randy, enseñar el emoji en el tablero
     public String getSimbolo() {
-        return "🐧"; // El icono del protagonista
+        return "🐧"; //Representa la seguridad en el tablero
     }
 
-    @Override
+    @Override 
+    //Explicar esta casilla
     public String getDescripcion() {
         return "Punto de salida";
     }
 
-    // Al ser una casilla segura, la interacción no cambia nada del jugador
+    //Interacción neutral,
+    //A diferencia del Oso o la Foca, el Pingüino es pacífico.
+    //Randy nos obliga a tener este método, pero aquí no modificamos
+    //ninguna estadística del jugador.
+    
     @Override
     public String interactuar(Jugador jugador) {
-        // Solo devuelve un mensaje de texto, no toca posición ni inventario
+        //Simplemente saludamos al jugador. 
+        //No hay cambios en posición ni en inventario.
         return "🐧 Estás en la casilla de los pingüinos.";
     }
-}
+} //Fin de la clase Pinguino

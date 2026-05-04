@@ -1,20 +1,27 @@
-package Modelo;
+package Modelo; 
+//Forma parte del Modelo porque define los datos de los objetos del juego
 
 public class Item {
 
-    // El 'enum' es una lista de valores fijos. 
-    // Sirve para no usar Strings (como "Pez") y evitar errores de escritura.
+    //El 'enum' es una lista de valores constantes.
+    //Randy (el jefe) prefiere esto antes que usar textos (Strings), porque
+    //así evitamos errores de escritura como poner "Pez" en un sitio y "pes" en otro.
+    
     public enum TipoItem {
         PEZ, BOLA_NIEVE, DADO
     }
 
-    private TipoItem tipo;
-    private String nombre;
+    private TipoItem tipo;  
+    //El tipo técnico (del Enum)
+    
+    private String nombre;  
+    //El nombre legible para jugadores
 
-    // Constructor: según el tipo que le pasemos, le asigna un nombre de texto
+    //Constructor, al crear un Item, le asignamos su identidad
     public Item(TipoItem tipo) {
         this.tipo = tipo;
 
+        //Usamos un switch para decidir qué nombre ponerle según su tipo
         switch (tipo) {
             case PEZ:
                 this.nombre = "Pez";
@@ -28,22 +35,28 @@ public class Item {
         }
     }
 
-    // Método para sacar el emoji correspondiente a cada objeto
+    //Método para obtener la representación visual del objeto.
+    //Ayuda a la interfaz gráfica a saber qué emoji pintar.
+    
     public String getSimbolo() {
         switch (tipo) {
             case PEZ: return "🐟";
             case BOLA_NIEVE: return "⛄";
             case DADO: return "🎲";
-            default: return "📦"; // Un paquete por si acaso hubiera un error
+            default: return "📦"; 
+            //Un "paquete" de seguridad por si Randy se confunde
         }
     }
 
-    // Getters para que el resto de clases sepan qué item es este
+    //Getters estándar
+    
     public TipoItem getTipo() {
-        return tipo;
+        return tipo; 
+        //Devuelve el valor del Enum (ej, TipoItem.PEZ)
     }
 
     public String getNombre() {
-        return nombre;
+        return nombre; 
+        //Devuelve el texto (ej, "Pez")
     }
-}
+} //Fin de la clase Item
