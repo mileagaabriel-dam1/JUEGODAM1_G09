@@ -1,7 +1,7 @@
 package Controladores; 
 //Indicamos que esta clase pertenece al paquete de Controladores
 
-import Modelo.Jugador; 
+import Modelo.Jugador;
 //Importamos la clase Jugador porque necesitamos gestionar sus turnos
 
 import java.util.List; 

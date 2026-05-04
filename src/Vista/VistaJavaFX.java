@@ -24,6 +24,10 @@ import javafx.stage.Stage;
 import Controladores.*;                
 //Importamos toda la lógica (nuestros controladores)
 
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import java.util.Optional;
+
 
 //Esta es la clase principal de la interfaz. 
 //'extends Application' le da los superpoderes de JavaFX para abrir ventanas.
@@ -66,12 +70,69 @@ public class VistaJavaFX extends Application {
     @Override
     public void start(Stage primaryStage) {
         
+        // --- 1. VENTANA DE INICIO DE SESIÓN / REGISTRO AUTOMÁTICO ---
+        // Implementamos un diálogo personalizado para pedir Nombre y Contraseña
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Acceso al Sistema");
+        dialog.setHeaderText("Bienvenido al Joc del Pingü - G09");
+
+        // Configuramos los botones de la ventana
+        ButtonType loginButtonType = new ButtonType("Entrar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+        // Creamos el contenedor para los campos de texto
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField username = new TextField();
+        username.setPromptText("Nombre");
+        PasswordField password = new PasswordField();
+        password.setPromptText("Contraseña");
+
+        grid.add(new Label("Usuario:"), 0, 0);
+        grid.add(username, 1, 0);
+        grid.add(new Label("Contraseña:"), 0, 1);
+        grid.add(password, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        
+        String nombreUsuario = "";
+        String passUsuario = "";
+
+        if (result.isPresent() && result.get() == loginButtonType){
+            // Normalizamos el nombre a mayúsculas para evitar duplicados en la BD
+            nombreUsuario = username.getText().trim().toUpperCase();
+            passUsuario = password.getText().trim();
+            System.out.println("Intentando sesión para: " + nombreUsuario);
+        } else {
+            System.exit(0); // Si cancela, cerramos la aplicación
+        }
+        // ------------------------------------------------------------
+
         //INICIAMOS LA LÓGICA
         //Creamos el "cerebro" y obtenemos sus partes
         controladorJuego = new controladorJuego();
+
+        // --- CONEXIÓN CON LA BASE DE DATOS ---
+        // Registramos u obtenemos el ID real consultando la columna "ID" y pasando la contraseña
+        int idLogueado = controladorJuego.registrarOLogearUsuario(nombreUsuario, passUsuario);
+        
+        // Mostramos el récord usando el ID real para evitar errores ORA-20001
+        controladorJuego.mostrarMiRecord(idLogueado); 
+        // ------------------------------------
+
         controladorTablero = controladorJuego.getControladorTablero();
         controladorJugador = controladorJuego.getControladorJugador();
         controladorTurnos = controladorJuego.getControladorTurnos();
+        
+        // --- VÍNCULO CON EL JUGADOR ---
+        // Guardamos el ID en el controlador de jugadores para usarlo al finalizar la partida
+        controladorJugador.setIdUsuarioLogueado(idLogueado);
+        controladorJugador.setNombreUsuarioLogueado(nombreUsuario);
 
         // 2. INICIALIZAMOS LAS SUB-VISTAS
         // Pasamos 'this' a los constructores para que las vistas puedan
@@ -112,7 +173,7 @@ public class VistaJavaFX extends Application {
         
         //Añadimos las 3 vistas a la columna en orden descendente
         derecha.getChildren().addAll(
-        		//getChildren, "dame tu lista vacia, y añade todo esto:"
+                //getChildren, "dame tu lista vacia, y añade todo esto:"
             vistaJugador.getVista(), 
             //Arriba, Datos del jugador
             vistaJuego.getVista(),   
@@ -223,7 +284,7 @@ public class VistaJavaFX extends Application {
     //"ventanillas de información" para que otras clases puedan usarlos sin romper nada.
 
     public controladorJuego getControladorJuego() { return controladorJuego; }
-	//Este método devuelve el cerebro principal del juego (lógica completa)
+    //Este método devuelve el cerebro principal del juego (lógica completa)
 
     public controladorTablero getControladorTablero() { return controladorTablero; }
     //Este devuelve el que sabe dónde están las casillas y los premios
@@ -248,4 +309,5 @@ public class VistaJavaFX extends Application {
         //Se encarga de levantar el sistema gráfico y, cuando está listo, llama al método start().
         launch(args); 
     }
-} //Fin de la clase VistaJavaFX
+} 
+//Fin de la clase VistaJavaFX

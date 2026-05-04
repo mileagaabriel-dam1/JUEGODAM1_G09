@@ -16,6 +16,10 @@ import java.util.List;
 public class controladorJugador { 
 	//Definición de la clase que gestionará a todos los participantes
 
+    // --- NUEVOS ATRIBUTOS PARA LA BASE DE DATOS ---
+    private int idUsuarioLogueado;
+    private String nombreUsuarioLogueado;
+
     //Declaramos una lista de objetos 'Jugador' como privada para proteger el acceso directo (encapsulamiento)
     private List<Jugador> jugadores;
 
@@ -26,6 +30,15 @@ public class controladorJugador {
         this.jugadores = new ArrayList<>();
     }
 
+    // --- NUEVOS MÉTODOS PARA RECIBIR DATOS DE LA VISTA ---
+    public void setIdUsuarioLogueado(int id) {
+        this.idUsuarioLogueado = id;
+    }
+
+    public void setNombreUsuarioLogueado(String nombre) {
+        this.nombreUsuarioLogueado = nombre;
+    }
+
     //Método público para configurar la partida recibiendo parámetros desde la interfaz (Vista)
     public void inicializarJugadores(int numHumanos, boolean incluirIA) {
         jugadores.clear(); 
@@ -34,8 +47,11 @@ public class controladorJugador {
         //Iniciamos un bucle que se repetirá tantas veces como humanos hayamos indicado
         for (int i = 1; i <= numHumanos; i++) {
         	
+            // Si es el primer jugador, usamos el nombre que viene de la Base de Datos
+            String nombreFinal = (i == 1 && nombreUsuarioLogueado != null) ? nombreUsuarioLogueado : "Jugador " + i;
+            
             //Creamos un nuevo objeto Jugador y lo metemos en la lista
-            jugadores.add(new Jugador("Jugador " + i, obtenerColor(i), TipoJugador.HUMANO));
+            jugadores.add(new Jugador(nombreFinal, obtenerColor(i), TipoJugador.HUMANO));
         } 
         //Fin del bucle for
 
