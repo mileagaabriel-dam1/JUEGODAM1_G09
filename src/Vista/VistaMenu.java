@@ -7,6 +7,9 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.paint.Color;
+//NUEVAS IMPORTACIONES, Para que las imágenes funcionen en el menú
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class VistaMenu {
 
@@ -28,9 +31,20 @@ public class VistaMenu {
         vista.setPrefHeight(70);
 
         // 2. TÍTULO CON EMOJIS
-        Label titulo = new Label("🐧 JOC DEL PINGÜ 🐧");
+        Label titulo = new Label(" JOC DEL PINGÜ ");
         titulo.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         titulo.setTextFill(Color.WHITE);
+
+        // LOGO DEL TÍTULO: Cargamos la imagen del pingüino para decorar la barra
+        try {
+            Image imgPingu = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
+            ImageView logoPingu = new ImageView(imgPingu);
+            logoPingu.setFitHeight(45); // Tamaño ajustado al alto de la barra
+            logoPingu.setPreserveRatio(true);
+            titulo.setGraphic(logoPingu); // Ponemos la foto a la izquierda del texto
+        } catch (Exception e) {
+            // Si hay error cargando, el título se queda con el texto normal
+        }
 
         // EL "SPACER": Truco de diseño para empujar los botones a la derecha
         Region spacer = new Region();
@@ -62,6 +76,17 @@ public class VistaMenu {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Nueva Partida");
         dialog.setHeaderText("⚙️ Configuración de la partida");
+
+        // IMAGEN DEL DIÁLOGO: Añadimos un pequeño pingüino también en la configuración
+        try {
+            Image imgConf = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
+            ImageView viewConf = new ImageView(imgConf);
+            viewConf.setFitHeight(40);
+            viewConf.setPreserveRatio(true);
+            dialog.setGraphic(viewConf); // Colocamos la imagen en la cabecera del diálogo
+        } catch (Exception e) {
+            // No hacemos nada si falla, se mostraría el diálogo sin icono
+        }
 
         // Añadimos botones estándar de aceptar y cancelar
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);

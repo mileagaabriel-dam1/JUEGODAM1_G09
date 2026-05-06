@@ -6,6 +6,13 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import Controladores.*;
 import Modelo.*;
+//IMPORTANTE, Cargamos estas clases para que las fotos funcionen
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+//HERRAMIENTAS DE ANIMACIÓN, Para que las fichas cobren vida
+import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 public class VistaTableroConImagenes {
 
@@ -73,9 +80,27 @@ public class VistaTableroConImagenes {
                                "-fx-background-color: #e0f7fa; -fx-background-radius: 5;");
 
             //CAPA 1, El dibujo (Emoji) según el tipo de casilla
-            String emoji = obtenerEmojiCasilla(casilla.getTipo());
-            Label label = new Label(emoji);
-            label.setFont(new Font(22));
+            // Intentamos cargar imagen, si no, usamos el emoji por defecto
+            try {
+                String ruta = obtenerRutaImagen(casilla.getTipo());
+                if (ruta != null) {
+                    Image img = new Image(getClass().getResourceAsStream(ruta));
+                    ImageView view = new ImageView(img);
+                    view.setFitWidth(40);
+                    view.setFitHeight(40);
+                    view.setPreserveRatio(true);
+                    // Añadimos la imagen como fondo de la casilla
+                    casillaPane.getChildren().add(view);
+                } else {
+                    Label label = new Label(obtenerEmojiCasilla(casilla.getTipo()));
+                    label.setFont(new Font(22));
+                    casillaPane.getChildren().add(label);
+                }
+            } catch (Exception e) {
+                Label label = new Label(obtenerEmojiCasilla(casilla.getTipo()));
+                label.setFont(new Font(22));
+                casillaPane.getChildren().add(label);
+            }
 
             // CAPA 2, El número de la casilla (para que el jugador no se pierda)
             Label numero = new Label(String.valueOf(i + 1));
@@ -85,13 +110,24 @@ public class VistaTableroConImagenes {
             StackPane.setAlignment(numero, Pos.TOP_LEFT);
 
             //Juntamos las capas en el panel de la casilla
-            casillaPane.getChildren().addAll(label, numero);
+            casillaPane.getChildren().add(numero);
             
             //Colocamos la casilla en la rejilla en su coordenada (X, Y)
             tableroGrid.add(casillaPane, columna, fila); 
             
             //Guardamos la casilla en nuestro array de 50 para poder encontrarla rápido luego
             casillas[i] = casillaPane; 
+        }
+    }
+
+    // Método para obtener las rutas de los archivos PNG
+    private String obtenerRutaImagen(TipoCasilla tipo) {
+        switch (tipo) {
+            case OSO: return "/resources/oso.png";
+            case AGUJERO: return "/resources/agujero.png";
+            case TRINEO: return "/resources/trineo.png";
+            case INTERROGANTE: return "/resources/foca.png";
+            default: return null;
         }
     }
 
@@ -115,10 +151,14 @@ public class VistaTableroConImagenes {
         //En cada StackPane, el [0] es el emoji y el [1] es el número.
         //Si hay un [2], es la ficha de un jugador. La borramos.
         for (StackPane casilla : casillas) {
-            while (casilla.getChildren().size() > 2) {
-                casilla.getChildren().remove(2);
+            // Eliminamos solo a partir del índice 2 para no borrar el fondo ni el número
+            if (casilla != null && casilla.getChildren().size() > 2) {
+                casilla.getChildren().remove(2, casilla.getChildren().size());
             }
         }
+
+        //Miramos a quién le toca mover para ponerle el efecto de parpadeo
+        Jugador actual = controladorTurnos.getJugadorActual();
 
         //DIBUJAR JUGADORES, Miramos dónde está cada uno y ponemos su ficha
         for (int i = 0; i < controladorJugador.getJugadores().size(); i++) {
@@ -128,27 +168,54 @@ public class VistaTableroConImagenes {
             //Si el jugador está dentro del tablero (0-49)
             if (posicion >= 0 && posicion < casillas.length) {
                 StackPane casilla = casillas[posicion];
+                javafx.scene.Node fichaVisual;
                 
-                //Creamos la ficha
-                Label ficha = new Label(iconosFichas[i]);
-                ficha.setFont(new Font(14));
-                //Estilo de la ficha: color único, negrita y fondo blanco para que se vea bien
-                ficha.setStyle("-fx-text-fill: " + obtenerColorJugador(i) + "; " +
-                             "-fx-font-weight: bold; -fx-background-color: white; -fx-padding: 0 2 0 2;");
-                
-                //Mandamos la ficha a la esquina inferior derecha de la casilla
-                StackPane.setAlignment(ficha, Pos.BOTTOM_RIGHT);
+                // Intentamos poner la foto del pingüino, si falla usamos el Label
+                try {
+                    Image imgPingu = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
+                    ImageView vistaPingu = new ImageView(imgPingu);
+                    vistaPingu.setFitWidth(35);
+                    vistaPingu.setPreserveRatio(true);
+                    
+                    // Efecto de sombra con el color del jugador para distinguirlos
+                    vistaPingu.setStyle("-fx-effect: dropshadow(three-pass-box, " + obtenerColorJugador(i) + ", 10, 0, 0, 0);");
+                    fichaVisual = vistaPingu;
+                } catch (Exception e) {
+                    //Creamos la ficha
+                    Label ficha = new Label(iconosFichas[i]);
+                    ficha.setFont(new Font(14));
+                    //Estilo de la ficha: color único, negrita y fondo blanco para que se vea bien
+                    ficha.setStyle("-fx-text-fill: " + obtenerColorJugador(i) + "; " +
+                                 "-fx-font-weight: bold; -fx-background-color: white; -fx-padding: 0 2 0 2;");
+                    fichaVisual = ficha;
+                }
+
+                //EFECTO DE TURNO ACTUAL: La ficha se vuelve transparente y vuelve a brillar para llamar la atención
+                if (jugador.equals(actual)) {
+                    FadeTransition parpadeo = new FadeTransition(Duration.millis(500), fichaVisual);
+                    parpadeo.setFromValue(1.0); // Opacidad total
+                    parpadeo.setToValue(0.4);   // Casi transparente
+                    parpadeo.setCycleCount(Timeline.INDEFINITE); // No para nunca
+                    parpadeo.setAutoReverse(true); // Va y vuelve (bucle suave)
+                    parpadeo.play(); // Arrancamos la animación
+                }
+
+                // Mandamos la ficha a la esquina inferior derecha de la casilla
+                StackPane.setAlignment(fichaVisual, Pos.BOTTOM_RIGHT);
                 
                 //La añadimos como CAPA 3 al StackPane de esa casilla
-                casilla.getChildren().add(ficha); 
+                casilla.getChildren().add(fichaVisual); 
             }
         }
     }
     
     //Asignamos colores fijos por el índice del jugador
     private String obtenerColorJugador(int index) {
-        String[] colores = {"red", "blue", "green", "orange"};
-        return (index < colores.length) ? colores[index] : "black";
+        String[] colores = {"red", "blue", "green", "orange", "purple"};
+        if (index >= 0 && index < colores.length) {
+            return colores[index];
+        }
+        return "black";
     }
 
     //Método para mover el pingüino (por ahora solo refresca, pero aquí irían las animaciones)

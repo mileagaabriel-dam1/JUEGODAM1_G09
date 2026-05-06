@@ -2,31 +2,26 @@ package Vista;
 //Indica que esta clase pertenece al paquete (carpeta) Vista
 
 //IMPORTS, Traemos las herramientas de JavaFX
-
 import javafx.application.Application; 
 //La clase base para cualquier app con ventana
-
 import javafx.geometry.Insets;         
 //Para gestionar márgenes y separaciones
-
 import javafx.scene.Scene;             
 //El "lienzo" donde se pintan los elementos
-
 import javafx.scene.layout.BorderPane; 
 //Organizador por zonas (Norte, Sur, Este, Oeste, Centro)
-
 import javafx.scene.layout.VBox;       
 //Organizador vertical (apila elementos)
-
 import javafx.stage.Stage;             
 //El "escenario" o marco de la ventana
-
 import Controladores.*;                
 //Importamos toda la lógica (nuestros controladores)
-
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import java.util.Optional;
+// IMPORTANTE: Añadimos estas para manejar las imágenes en la clase principal si hiciera falta
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 
 //Esta es la clase principal de la interfaz. 
@@ -49,19 +44,19 @@ public class VistaJavaFX extends Application {
     //Top, Bottom, Left, Right, Center. Ahora nos suena mas eh
     
     //Las sub-clases de la vista (Modularización cada cosa en su sitio)
-    private VistaMenu vistaMenu;                  
+    private VistaMenu vistaMenu;                    
     //El menú superior
     
-    private VistaJuego vistaJuego;                
+    private VistaJuego vistaJuego;                  
     //Botones de acción (dados)
     
     private VistaTableroConImagenes vistaTablero; 
     //El tablero visual con casillas
     
-    private VistaJugador vistaJugador;            
+    private VistaJugador vistaJugador;              
     //Panel con info del jugador actual
     
-    private VistaEventos vistaEventos;            
+    private VistaEventos vistaEventos;              
     //El diario de mensajes (log)
 
     //El método start es el punto de inicio de JavaFX.
@@ -75,6 +70,17 @@ public class VistaJavaFX extends Application {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Acceso al Sistema");
         dialog.setHeaderText("Bienvenido al Joc del Pingü - G09");
+
+        // DECORACIÓN DEL LOGIN, Intentamos poner el icono del pingüino en la ventana de acceso
+        try {
+            Image imgLogin = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
+            ImageView vistaLogin = new ImageView(imgLogin);
+            vistaLogin.setFitHeight(50);
+            vistaLogin.setPreserveRatio(true);
+            dialog.setGraphic(vistaLogin); // Ponemos el pingüino al lado del título del diálogo
+        } catch (Exception e) {
+            // Si no hay foto, el diálogo se muestra solo con texto
+        }
 
         // Configuramos los botones de la ventana
         ButtonType loginButtonType = new ButtonType("Entrar", ButtonBar.ButtonData.OK_DONE);

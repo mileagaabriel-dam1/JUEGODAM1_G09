@@ -9,6 +9,10 @@ import javafx.scene.text.Font;      // Para definir el tipo de letra
 import javafx.scene.text.FontWeight; // Para aplicar estilos como la negrita (bold)
 import Controladores.*;             // Traemos la lógica de control (Turnos, etc.)
 import Modelo.*;                    // Traemos los datos (Jugador, Inventario, etc.)
+// NUEVAS IMPORTACIONES PARA IMÁGENES
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 /**
  * Clase VistaJugador: Se encarga exclusivamente de mostrar la ficha técnica
@@ -25,6 +29,7 @@ public class VistaJugador {
     private Label posicionLabel;    // Muestra el número de casilla
     private Label inventarioLabel;  // Muestra los objetos que posee
     private Label turnoLabel;       // Indica de quién es el turno actual
+    private ImageView fotoPerfil;   // Imagen del pingüino que representa al jugador
 
     /**
      * CONSTRUCTOR
@@ -62,6 +67,16 @@ public class VistaJugador {
         // Color de texto gris oscuro profesional
         titulo.setStyle("-fx-text-fill: #37474f;"); 
 
+        // PREPARAMOS LA IMAGEN DEL PINGÜINO
+        fotoPerfil = new ImageView();
+        fotoPerfil.setFitWidth(60); // Tamaño adecuado para el panel lateral
+        fotoPerfil.setPreserveRatio(true);
+        
+        // Contenedor horizontal para el título y la foto (para que quede bonito)
+        HBox cabeceraConFoto = new HBox(20);
+        cabeceraConFoto.setAlignment(Pos.CENTER_LEFT);
+        cabeceraConFoto.getChildren().addAll(titulo, fotoPerfil);
+
         // Inicializamos las etiquetas con valores por defecto (Placeholder)
         turnoLabel = new Label("Turno: -");
         jugadorLabel = new Label("Jugador: -");
@@ -76,7 +91,7 @@ public class VistaJugador {
 
         // Metemos todos los elementos en la "bolsa" del VBox
         // El orden de los argumentos aquí dicta el orden visual de arriba a abajo
-        vista.getChildren().addAll(titulo, turnoLabel, jugadorLabel, posicionLabel, inventarioLabel);
+        vista.getChildren().addAll(cabeceraConFoto, turnoLabel, jugadorLabel, posicionLabel, inventarioLabel);
     }
 
     /**
@@ -98,6 +113,17 @@ public class VistaJugador {
         // Usamos un operador ternario para añadir "(IA)" al nombre si el jugador no es humano
         String tipo = actual.esIA() ? " (IA)" : "";
 
+        // CARGAMOS LA IMAGEN DEL PINGÜINO
+        try {
+            Image img = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
+            fotoPerfil.setImage(img);
+            // Le ponemos un resplandor del color del jugador para identificarlo
+            int idJugador = principal.getControladorJugador().getJugadores().indexOf(actual);
+            fotoPerfil.setStyle("-fx-effect: dropshadow(three-pass-box, " + obtenerColorJugador(idJugador) + ", 15, 0.5, 0, 0);");
+        } catch (Exception e) {
+            // Si falla la imagen, no hacemos nada para no romper el programa
+        }
+
         // Refrescamos los textos de las etiquetas con la información real del objeto Jugador
         turnoLabel.setText(" 🚩 Turno: " + actual.getNombre());
         jugadorLabel.setText(" 👤 Jugador: " + actual.getNombre() + tipo);
@@ -116,6 +142,15 @@ public class VistaJugador {
     }
 
     /**
+     * MÉTODO PARA OBTENER EL COLOR (Copia del que usamos en el tablero para coherencia)
+     */
+    private String obtenerColorJugador(int index) {
+        String[] colores = {"red", "blue", "green", "orange", "purple"};
+        if (index >= 0 && index < colores.length) return colores[index];
+        return "black";
+    }
+
+    /**
      * MÉTODO limpiar: Restablece el panel a su estado neutro.
      */
     public void limpiar() {
@@ -123,6 +158,7 @@ public class VistaJugador {
         jugadorLabel.setText(" Jugador: -");
         posicionLabel.setText(" Posición: -");
         inventarioLabel.setText(" Inventario: -");
+        fotoPerfil.setImage(null);
     }
 
     /**
