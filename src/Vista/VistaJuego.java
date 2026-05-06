@@ -1,4 +1,5 @@
 package Vista; 
+
 //Carpeta donde vive el archivo
 
 //IMPORTS, Nuestras herramientas de construcción 
@@ -156,10 +157,6 @@ public class VistaJuego {
                     //Avisamos si pasó algo extra
                 }
 
-                //REFRESCAR, Actualizamos los dibujos y los textos del panel lateral
-                tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
-                principal.getVistaJugador().actualizar(controladorTurnos);
-
                 //FINAL, ¿Alguien ha llegado a la meta (casilla 49)?
                 if (destino == 49) {
                     principal.getVistaEventos().agregarEvento("🎉 ¡" + jugador.getNombre() + " HA GANADO! 🎉");
@@ -168,12 +165,21 @@ public class VistaJuego {
                     
                     btnLanzarDado.setDisable(true); 
                     //Bloqueamos el botón para siempre
+                    
+                    // REFRESCAMOS para que se vea la posición final antes de terminar
+                    tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
                     return;
                 }
 
                 //SIGUIENTE, Pasamos el turno al siguiente jugador
+                // --- CAMBIO CLAVE: Pasamos el turno ANTES de refrescar las posiciones ---
                 controladorTurnos.siguienteTurno();
+                
+                //REFRESCAR, Actualizamos los dibujos y los textos del panel lateral
+                // Ahora que el turno ha cambiado, el parpadeo saltará correctamente al nuevo jugador
+                tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
                 principal.getVistaJugador().actualizar(controladorTurnos);
+                
                 principal.getVistaEventos().agregarEvento("➡️ Siguiente: " + controladorTurnos.getJugadorActual().getNombre());
 
                 //Desbloqueamos el botón para el siguiente jugador (si es humano)

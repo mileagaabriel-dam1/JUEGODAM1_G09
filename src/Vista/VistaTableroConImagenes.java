@@ -147,30 +147,29 @@ public class VistaTableroConImagenes {
      //ACTUALIZAR: Mueve las fichas de los jugadores por el tablero.
     
     public void actualizarPosiciones(controladorJugador controladorJugador, controladorTurnos controladorTurnos) {
-        //LIMPIEZA, Quitamos las fichas antiguas.
-        //En cada StackPane, el [0] es el emoji y el [1] es el número.
-        //Si hay un [2], es la ficha de un jugador. La borramos.
+        //LIMPIEZA, Quitamos las fichas antiguas para que no se amontonen
         for (StackPane casilla : casillas) {
-            // Eliminamos solo a partir del índice 2 para no borrar el fondo ni el número
             if (casilla != null && casilla.getChildren().size() > 2) {
                 casilla.getChildren().remove(2, casilla.getChildren().size());
             }
         }
 
-        //Miramos a quién le toca mover para ponerle el efecto de parpadeo
-        Jugador actual = controladorTurnos.getJugadorActual();
+        // --- CORRECCIÓN CLAVE --- 
+        // Obtenemos el jugador actual justo en el momento de pintar las fichas.
+        // Si la IA acaba de terminar, 'controladorTurnos' ya debería apuntar a ti.
+        Jugador jugadorConTurno = controladorTurnos.getJugadorActual();
 
         //DIBUJAR JUGADORES, Miramos dónde está cada uno y ponemos su ficha
         for (int i = 0; i < controladorJugador.getJugadores().size(); i++) {
-            Jugador jugador = controladorJugador.getJugadores().get(i);
-            int posicion = jugador.getPosicion();
+            Jugador j = controladorJugador.getJugadores().get(i);
+            int posicion = j.getPosicion();
 
             //Si el jugador está dentro del tablero (0-49)
             if (posicion >= 0 && posicion < casillas.length) {
                 StackPane casilla = casillas[posicion];
                 javafx.scene.Node fichaVisual;
                 
-                // Intentamos poner la foto del pingüino, si falla usamos el Label
+                // Intentamos poner la foto del pingüino
                 try {
                     Image imgPingu = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
                     ImageView vistaPingu = new ImageView(imgPingu);
@@ -181,29 +180,28 @@ public class VistaTableroConImagenes {
                     vistaPingu.setStyle("-fx-effect: dropshadow(three-pass-box, " + obtenerColorJugador(i) + ", 10, 0, 0, 0);");
                     fichaVisual = vistaPingu;
                 } catch (Exception e) {
-                    //Creamos la ficha
+                    //Ficha de texto si falla la imagen
                     Label ficha = new Label(iconosFichas[i]);
                     ficha.setFont(new Font(14));
-                    //Estilo de la ficha: color único, negrita y fondo blanco para que se vea bien
                     ficha.setStyle("-fx-text-fill: " + obtenerColorJugador(i) + "; " +
                                  "-fx-font-weight: bold; -fx-background-color: white; -fx-padding: 0 2 0 2;");
                     fichaVisual = ficha;
                 }
 
-                //EFECTO DE TURNO ACTUAL: La ficha se vuelve transparente y vuelve a brillar para llamar la atención
-                if (jugador.equals(actual)) {
+                // EFECTO DE TURNO: Comprobamos si el jugador que estamos dibujando es el que tiene el turno real
+                // Usamos el nombre o el objeto para asegurar que el parpadeo te siga a ti
+                // CAMBIO: Usamos comparación de nombres para evitar fallos de referencia de memoria
+                if (jugadorConTurno != null && j.getNombre().equals(jugadorConTurno.getNombre())) {
                     FadeTransition parpadeo = new FadeTransition(Duration.millis(500), fichaVisual);
-                    parpadeo.setFromValue(1.0); // Opacidad total
-                    parpadeo.setToValue(0.4);   // Casi transparente
-                    parpadeo.setCycleCount(Timeline.INDEFINITE); // No para nunca
-                    parpadeo.setAutoReverse(true); // Va y vuelve (bucle suave)
-                    parpadeo.play(); // Arrancamos la animación
+                    parpadeo.setFromValue(1.0); // Brillo total
+                    parpadeo.setToValue(0.3);   // Casi invisible
+                    parpadeo.setCycleCount(Timeline.INDEFINITE);
+                    parpadeo.setAutoReverse(true);
+                    parpadeo.play(); // ¡A parpadear!
                 }
 
-                // Mandamos la ficha a la esquina inferior derecha de la casilla
+                // Mandamos la ficha a la esquina inferior derecha
                 StackPane.setAlignment(fichaVisual, Pos.BOTTOM_RIGHT);
-                
-                //La añadimos como CAPA 3 al StackPane de esa casilla
                 casilla.getChildren().add(fichaVisual); 
             }
         }
@@ -223,7 +221,6 @@ public class VistaTableroConImagenes {
         actualizarPosiciones(principal.getControladorJugador(), principal.getControladorTurnos());
         if (callback != null) {
             callback.run(); 
-            //Ejecuta lo siguiente que tenga que pasar (ej. activar casilla)
         }
     }
 
