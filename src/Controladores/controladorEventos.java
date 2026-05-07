@@ -16,7 +16,7 @@ public class controladorEventos {
         String mensaje = ""; 
         //Variable auxiliar para guardar el texto que devolveremos a la interfaz
 
-        // Guardamos la posición antes del evento para ver si cambia
+        //Guardamos la posición antes del evento para ver si cambia
         int posicionInicial = jugador.getPosicion();
 
         switch(casilla.getTipo()) {
@@ -53,9 +53,10 @@ public class controladorEventos {
             mensaje = entidad.interactuar(jugador);
             //Gracias al polimorfismo, se ejecuta el método interactuar de la clase hija específica
 
-            // --- COMPROBACIÓN TÉCNICA ---
-            // Si después de interactuar la posición ha cambiado (ej. por un Oso o Agujero),
-            // hay que avisar al sistema de que el pingüino se ha movido.
+            //COMPROBACIÓN TÉCNICA
+            
+            //Si después de interactuar la posición ha cambiado (ej. por un Oso o Agujero),
+            //hay que avisar al sistema de que el pingüino se ha movido.
             if (jugador.getPosicion() != posicionInicial) {
                 System.out.println("LOG: El jugador se ha movido a la casilla " + jugador.getPosicion());
             }

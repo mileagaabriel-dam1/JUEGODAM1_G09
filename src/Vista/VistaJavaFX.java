@@ -65,28 +65,29 @@ public class VistaJavaFX extends Application {
     @Override
     public void start(Stage primaryStage) {
         
-        // --- 1. VENTANA DE INICIO DE SESIÓN / REGISTRO AUTOMÁTICO ---
-        // Implementamos un diálogo personalizado para pedir Nombre y Contraseña
+        //VENTANA DE INICIO DE SESIÓN/REGISTRO AUTOMÁTICO
+        //Implementamos un diálogo personalizado para pedir Nombre y Contraseña
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Acceso al Sistema");
         dialog.setHeaderText("Bienvenido al Joc del Pingü - G09");
 
-        // DECORACIÓN DEL LOGIN, Intentamos poner el icono del pingüino en la ventana de acceso
+        //DECORACIÓN DEL LOGIN, Intentamos poner el icono del pingüino en la ventana de acceso
         try {
             Image imgLogin = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
             ImageView vistaLogin = new ImageView(imgLogin);
             vistaLogin.setFitHeight(50);
             vistaLogin.setPreserveRatio(true);
-            dialog.setGraphic(vistaLogin); // Ponemos el pingüino al lado del título del diálogo
+            dialog.setGraphic(vistaLogin); 
+            //Ponemos el pingüino al lado del título del diálogo
         } catch (Exception e) {
-            // Si no hay foto, el diálogo se muestra solo con texto
+            //Si no hay foto, el diálogo se muestra solo con texto
         }
 
-        // Configuramos los botones de la ventana
+        //Configuramos los botones de la ventana
         ButtonType loginButtonType = new ButtonType("Entrar", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
 
-        // Creamos el contenedor para los campos de texto
+        //Creamos el contenedor para los campos de texto
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -110,39 +111,38 @@ public class VistaJavaFX extends Application {
         String passUsuario = "";
 
         if (result.isPresent() && result.get() == loginButtonType){
-            // Normalizamos el nombre a mayúsculas para evitar duplicados en la BD
+            //Normalizamos el nombre a mayúsculas para evitar duplicados en la BD
             nombreUsuario = username.getText().trim().toUpperCase();
             passUsuario = password.getText().trim();
             System.out.println("Intentando sesión para: " + nombreUsuario);
         } else {
             System.exit(0); // Si cancela, cerramos la aplicación
         }
-        // ------------------------------------------------------------
+
 
         //INICIAMOS LA LÓGICA
         //Creamos el "cerebro" y obtenemos sus partes
         controladorJuego = new controladorJuego();
 
-        // --- CONEXIÓN CON LA BASE DE DATOS ---
-        // Registramos u obtenemos el ID real consultando la columna "ID" y pasando la contraseña
+        //CONEXIÓN CON LA BASE DE DATOS
+        //Registramos u obtenemos el ID real consultando la columna "ID" y pasando la contraseña
         int idLogueado = controladorJuego.registrarOLogearUsuario(nombreUsuario, passUsuario);
         
-        // Mostramos el récord usando el ID real para evitar errores ORA-20001
+        //Mostramos el récord usando el ID real para evitar errores ORA-20001
         controladorJuego.mostrarMiRecord(idLogueado); 
-        // ------------------------------------
 
         controladorTablero = controladorJuego.getControladorTablero();
         controladorJugador = controladorJuego.getControladorJugador();
         controladorTurnos = controladorJuego.getControladorTurnos();
         
-        // --- VÍNCULO CON EL JUGADOR ---
-        // Guardamos el ID en el controlador de jugadores para usarlo al finalizar la partida
+        //VÍNCULO CON EL JUGADOR
+        //Guardamos el ID en el controlador de jugadores para usarlo al finalizar la partida
         controladorJugador.setIdUsuarioLogueado(idLogueado);
         controladorJugador.setNombreUsuarioLogueado(nombreUsuario);
 
-        // 2. INICIALIZAMOS LAS SUB-VISTAS
-        // Pasamos 'this' a los constructores para que las vistas puedan
-        // llamar a métodos de esta clase principal (comunicación bidireccional).
+        //INICIALIZAMOS LAS SUB-VISTAS
+        //Pasamos 'this' a los constructores para que las vistas puedan
+        //llamar a métodos de esta clase principal (comunicación bidireccional).
         vistaMenu = new VistaMenu(this);
         vistaJuego = new VistaJuego(this);
         vistaTablero = new VistaTableroConImagenes(this);

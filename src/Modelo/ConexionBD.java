@@ -36,14 +36,16 @@ public class ConexionBD {
              PreparedStatement pstmt = con.prepareStatement(sql)) {
             
             //Rellenamos las "interrogaciones" con los datos del juego
-            pstmt.setInt(1, idJugador);    // El ID del pingüino que está jugando
-            pstmt.setInt(2, puntuacion);   // Los puntos que ha sacado
-            pstmt.setString(3, haGanado);  // 'S' si ha ganado, 'N' si no
+            pstmt.setInt(1, idJugador);    
+            //El ID del pingüino que está jugando
+            pstmt.setInt(2, puntuacion);   
+            //Los puntos que ha sacado
+            pstmt.setString(3, haGanado);  
+            //'S' si ha ganado, 'N' si no
             
             //Le damos al botón de "enviar" a Oracle
             pstmt.executeUpdate();
 
-            // --- ESTA ES LA LÍNEA QUE FALTABA ---
             con.commit(); 
             // Confirmamos la transacción para que los cambios sean permanentes
             

@@ -22,39 +22,43 @@ public class VistaMenu {
     }
 
     private void crearVista() {
-        // 1. BARRA SUPERIOR (HBox)
+        //BARRA SUPERIOR (HBox)
         vista = new HBox(20);
-        vista.setAlignment(Pos.CENTER_LEFT); // Título a la izquierda
+        vista.setAlignment(Pos.CENTER_LEFT); 
+        //Título a la izquierda
         vista.setPadding(new Insets(10));
-        // Azul vibrante (#0288d1) para que destaque
+        //Azul vibrante (#0288d1) para que destaque
         vista.setStyle("-fx-background-color: #0288d1;");
         vista.setPrefHeight(70);
 
-        // 2. TÍTULO CON EMOJIS
+        //TÍTULO CON EMOJIS
         Label titulo = new Label(" JOC DEL PINGÜ ");
         titulo.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         titulo.setTextFill(Color.WHITE);
 
-        // LOGO DEL TÍTULO: Cargamos la imagen del pingüino para decorar la barra
+        //LOGO DEL TÍTULO, Cargamos la imagen del pingüino para decorar la barra
         try {
             Image imgPingu = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
             ImageView logoPingu = new ImageView(imgPingu);
-            logoPingu.setFitHeight(45); // Tamaño ajustado al alto de la barra
+            logoPingu.setFitHeight(45); 
+            //Tamaño ajustado al alto de la barra
             logoPingu.setPreserveRatio(true);
-            titulo.setGraphic(logoPingu); // Ponemos la foto a la izquierda del texto
+            titulo.setGraphic(logoPingu); 
+            //Ponemos la foto a la izquierda del texto
         } catch (Exception e) {
-            // Si hay error cargando, el título se queda con el texto normal
+            //Si hay error cargando, el título se queda con el texto normal
         }
 
-        // EL "SPACER": Truco de diseño para empujar los botones a la derecha
+        //EL "SPACER", Truco de diseño para empujar los botones a la derecha
         Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS); // Hace que este espacio crezca todo lo posible
+        HBox.setHgrow(spacer, Priority.ALWAYS); 
+        //Hace que este espacio crezca todo lo posible
 
-        // 3. BOTONES DE ACCIÓN
+        //BOTONES DE ACCIÓN
         Button btnNuevaPartida = new Button("🎮 Nueva Partida");
         btnNuevaPartida.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white; " +
                                "-fx-font-weight: bold; -fx-padding: 8 15; -fx-background-radius: 20;");
-        // Al pulsar, abrimos el formulario de configuración
+        //Al pulsar, abrimos el formulario de configuración
         btnNuevaPartida.setOnAction(e -> mostrarDialogoNuevaPartida());
 
         Button btnSalir = new Button("🚪 Salir");
@@ -65,33 +69,33 @@ public class VistaMenu {
         HBox botones = new HBox(10, btnNuevaPartida, btnSalir);
         botones.setAlignment(Pos.CENTER_RIGHT);
 
-        // Añadimos todo a la barra principal
+        //Añadimos todo a la barra principal
         vista.getChildren().addAll(titulo, spacer, botones);
     }
 
-    /**
-     * DIÁLOGO DE CONFIGURACIÓN: Ventana flotante para elegir jugadores.
-     */
+    //DIÁLOGO DE CONFIGURACIÓN, Ventana flotante para elegir jugadores.
+
     private void mostrarDialogoNuevaPartida() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Nueva Partida");
         dialog.setHeaderText("⚙️ Configuración de la partida");
 
-        // IMAGEN DEL DIÁLOGO: Añadimos un pequeño pingüino también en la configuración
+        //IMAGEN DEL DIÁLOGO, Añadimos un pequeño pingüino también en la configuración
         try {
             Image imgConf = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
             ImageView viewConf = new ImageView(imgConf);
             viewConf.setFitHeight(40);
             viewConf.setPreserveRatio(true);
-            dialog.setGraphic(viewConf); // Colocamos la imagen en la cabecera del diálogo
+            dialog.setGraphic(viewConf); 
+            //Colocamos la imagen en la cabecera del diálogo
         } catch (Exception e) {
-            // No hacemos nada si falla, se mostraría el diálogo sin icono
+            //No hacemos nada si falla, se mostraría el diálogo sin icono
         }
 
-        // Añadimos botones estándar de aceptar y cancelar
+        //Añadimos botones estándar de aceptar y cancelar
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Grid para organizar el formulario dentro del diálogo
+        //Grid para organizar el formulario dentro del diálogo
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -107,20 +111,20 @@ public class VistaMenu {
 
         dialog.getDialogPane().setContent(grid);
 
-        // Manejo de la respuesta del usuario
+        //Manejo de la respuesta del usuario
         dialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
                     int numHumanos = Integer.parseInt(numHumanosField.getText());
                     boolean incluirIA = incluirIACheck.isSelected();
 
-                    // Validación: que no pongan 0 o 5 jugadores
+                    //Validación, que no pongan 0 o 5 jugadores
                     if (numHumanos < 1 || numHumanos > 3) {
                         mostrarError("El número debe ser entre 1 y 3");
                         return;
                     }
 
-                    // Iniciamos la partida en la clase principal
+                    //Iniciamos la partida en la clase principal
                     if (principal != null) {
                         principal.iniciarPartida(numHumanos, incluirIA);
                     }
@@ -132,7 +136,7 @@ public class VistaMenu {
         });
     }
 
-    // Ventana de alerta en caso de error
+    //Ventana de alerta en caso de error
     private void mostrarError(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");

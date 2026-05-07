@@ -105,7 +105,7 @@ public class VistaJuego {
         vista.getChildren().addAll(titulo, dadoLabel, btnLanzarDado);
     }
 
-    //LÓGICA PRINCIPAL: Qué pasa cuando se tira el dado
+    //LÓGICA PRINCIPAL, Qué pasa cuando se tira el dado
     
     public void lanzarDado() {
         //Si el juego no ha empezado, no hacemos nada
@@ -166,11 +166,11 @@ public class VistaJuego {
                     btnLanzarDado.setDisable(true); 
                     //Bloqueamos el botón para siempre
                     
-                    // REFRESCAMOS para que se vea la posición final antes de terminar
+                    //REFRESCAMOS para que se vea la posición final antes de terminar
                     tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
 
-                    // --- NUEVO: LLAMAMOS AL CARTEL DE VICTORIA Y GUARDADO EN ORACLE ---
-                    // Usamos Platform.runLater para que la ventana emergente no bloquee la animación de JavaFX
+                    //LLAMAMOS AL CARTEL DE VICTORIA Y GUARDADO EN ORACLE
+                    //Usamos Platform.runLater para que la ventana emergente no bloquee la animación de JavaFX
                     Platform.runLater(() -> {
                         principal.getControladorJuego().comprobarVictoria(jugador);
                     });
@@ -179,11 +179,11 @@ public class VistaJuego {
                 }
 
                 //SIGUIENTE, Pasamos el turno al siguiente jugador
-                // --- CAMBIO CLAVE: Pasamos el turno ANTES de refrescar las posiciones ---
+                //Pasamos el turno ANTES de refrescar las posiciones
                 controladorTurnos.siguienteTurno();
                 
                 //REFRESCAR, Actualizamos los dibujos y los textos del panel lateral
-                // Ahora que el turno ha cambiado, el parpadeo saltará correctamente al nuevo jugador
+                //Ahora que el turno ha cambiado, el parpadeo saltará correctamente al nuevo jugador
                 tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
                 principal.getVistaJugador().actualizar(controladorTurnos);
                 

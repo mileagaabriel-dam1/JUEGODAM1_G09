@@ -16,7 +16,7 @@ import java.util.List;
 public class controladorJugador { 
 	//Definición de la clase que gestionará a todos los participantes
 
-    // --- NUEVOS ATRIBUTOS PARA LA BASE DE DATOS ---
+
     private int idUsuarioLogueado;
     private String nombreUsuarioLogueado;
 
@@ -30,7 +30,7 @@ public class controladorJugador {
         this.jugadores = new ArrayList<>();
     }
 
-    // --- NUEVOS MÉTODOS PARA RECIBIR DATOS DE LA VISTA ---
+    //MÉTODOS PARA RECIBIR DATOS DE LA VISTA
     public void setIdUsuarioLogueado(int id) {
         this.idUsuarioLogueado = id;
     }
@@ -47,14 +47,14 @@ public class controladorJugador {
         //Iniciamos un bucle que se repetirá tantas veces como humanos hayamos indicado
         for (int i = 1; i <= numHumanos; i++) {
         	
-            // Si es el primer jugador, usamos el nombre que viene de la Base de Datos
+            //Si es el primer jugador, usamos el nombre que viene de la Base de Datos
             String nombreFinal = (i == 1 && nombreUsuarioLogueado != null) ? nombreUsuarioLogueado : "Jugador " + i;
             
-            // Creamos el objeto Jugador
+            //Creamos el objeto Jugador
             Jugador nuevoJugador = new Jugador(nombreFinal, obtenerColor(i), TipoJugador.HUMANO);
 
-            // --- VINCULACIÓN CON ORACLE ---
-            // Si es el jugador principal (el que se logueó), le asignamos su ID de la base de datos
+            //VINCULACIÓN CON ORACLE
+            //Si es el jugador principal (el que se logueó), le asignamos su ID de la base de datos
             if (i == 1 && idUsuarioLogueado > 0) {
                 nuevoJugador.setId(idUsuarioLogueado);
             }
@@ -75,7 +75,7 @@ public class controladorJugador {
     
     // Método auxiliar privado para asignar colores; solo lo ve esta clase
     private String obtenerColor(int num) {
-        // Evaluamos el número de orden del jugador para darle una identidad visual
+        //Evaluamos el número de orden del jugador para darle una identidad visual
         switch(num) {
             case 1: return "Azul";
             case 2: return "Verde";
@@ -97,14 +97,14 @@ public class controladorJugador {
         
         System.out.println("¡" + ganador.getNombre() + " ha ganado!");
 
-        // --- CONEXIÓN CON ORACLE AL FINALIZAR ---
-        // Si el ganador es el humano que se logueó (tiene ID > 0)
+        //CONEXIÓN CON ORACLE AL FINALIZAR
+        //Si el ganador es el humano que se logueó (tiene ID > 0)
         if (ganador.getId() > 0) {
             // Calculamos una puntuación (por ejemplo, 100 puntos por ganar)
             int puntosFinales = 100; 
             
-            // Llamamos al método de la base de datos para guardar
-            // Usamos 'S' porque este método se llama al ganar
+            //Llamamos al método de la base de datos para guardar
+            //Usamos 'S' porque este método se llama al ganar
             Modelo.ConexionBD.guardarPartida(ganador.getId(), puntosFinales, "S");
             
             System.out.println("LOG: Victoria de " + ganador.getNombre() + " guardada en Oracle.");

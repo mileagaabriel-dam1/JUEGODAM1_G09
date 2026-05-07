@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Jugador {
 
-    // --- NUEVO ATRIBUTO PARA ORACLE ---
+    //ATRIBUTO PARA ORACLE
     private int id; 
-    // Su identificador único en la tabla JUGADORS
+    //Su identificador único en la tabla JUGADORS
 
     //Atributos privados, Encapsulamiento puro. Solo el jugador sabe sus secretos.
     private String nombre;
@@ -40,7 +40,7 @@ public class Jugador {
         //Inicializamos la lista de acciones
     }
 
-    // --- NUEVOS MÉTODOS PARA EL ID ---
+    //MÉTODOS PARA EL ID
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

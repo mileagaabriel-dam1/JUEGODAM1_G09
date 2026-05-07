@@ -16,7 +16,7 @@ public class controladorTurnos {
     //Índice numérico que representa la posición en la lista del jugador que tiene el turno
     private int turnoActual;
 
-    // --- NUEVO ATRIBUTO PARA CONECTAR CON EL CORAZÓN DEL JUEGO ---
+    //ATRIBUTO PARA CONECTAR CON EL CORAZÓN DEL JUEGO
     private controladorJuego gestorPrincipal;
 
     //Constructor del controlador
@@ -25,9 +25,9 @@ public class controladorTurnos {
         this.turnoActual = 0;
     }
 
-    // --- MÉTODO PARA ASIGNAR EL CONTROLADOR PRINCIPAL ---
+    //MÉTODO PARA ASIGNAR EL CONTROLADOR PRINCIPAL
     public void setControladorJuego(controladorJuego gestor) {
-        // Vinculamos este controlador con el controlador maestro
+        //Vinculamos este controlador con el controlador maestro
         this.gestorPrincipal = gestor;
     }
 
@@ -60,20 +60,20 @@ public class controladorTurnos {
     	
         if (jugadores != null && !jugadores.isEmpty()) {
 
-            // --- CHEQUEO DE VICTORIA ANTES DE CAMBIAR ---
-            // Antes de pasar al siguiente, miramos si el que acaba de mover ha ganado
+            //CHEQUEO DE VICTORIA ANTES DE CAMBIAR
+            //Antes de pasar al siguiente, miramos si el que acaba de mover ha ganado
             if (gestorPrincipal != null) {
-                // Obtenemos al que acaba de tirar y miramos si está en la meta
+                //Obtenemos al que acaba de tirar y miramos si está en la meta
                 Jugador jugadorQueAcabaDeMover = getJugadorActual();
                 
-                // Si el jugador ya está en la casilla 49 (casilla 50 real), llamamos a victoria
+                //Si el jugador ya está en la casilla 49 (casilla 50 real), llamamos a victoria
                 if (jugadorQueAcabaDeMover.getPosicion() >= 49) {
                     gestorPrincipal.comprobarVictoria(jugadorQueAcabaDeMover);
-                    return; // IMPORTANTE: Si ha ganado, salimos del método y NO pasamos el turno
+                    return; //IMPORTANTE, Si ha ganado, salimos del método y NO pasamos el turno
                 }
             }
 
-            // --- CHIVATO PARA CONSOLA ---
+            //Para saber de quien se acaba de pasar el turno
             System.out.println("LOG: Pasando el turno del jugador: " + getJugadorActual().getNombre());
 
             turnoActual = (turnoActual + 1) % jugadores.size();

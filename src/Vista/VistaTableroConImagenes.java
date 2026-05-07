@@ -80,7 +80,7 @@ public class VistaTableroConImagenes {
                                "-fx-background-color: #e0f7fa; -fx-background-radius: 5;");
 
             //CAPA 1, El dibujo (Emoji) según el tipo de casilla
-            // Intentamos cargar imagen, si no, usamos el emoji por defecto
+            //Intentamos cargar imagen, si no, usamos el emoji por defecto
             try {
                 String ruta = obtenerRutaImagen(casilla.getTipo());
                 if (ruta != null) {
@@ -102,11 +102,11 @@ public class VistaTableroConImagenes {
                 casillaPane.getChildren().add(label);
             }
 
-            // CAPA 2, El número de la casilla (para que el jugador no se pierda)
+            //CAPA 2, El número de la casilla (para que el jugador no se pierda)
             Label numero = new Label(String.valueOf(i + 1));
             numero.setFont(new Font(8));
             numero.setStyle("-fx-text-fill: gray;");
-            // Usamos el método estático para mandarlo a la esquina superior izquierda
+            //Usamos el método estático para mandarlo a la esquina superior izquierda
             StackPane.setAlignment(numero, Pos.TOP_LEFT);
 
             //Juntamos las capas en el panel de la casilla
@@ -120,7 +120,7 @@ public class VistaTableroConImagenes {
         }
     }
 
-    // Método para obtener las rutas de los archivos PNG
+    //Método para obtener las rutas de los archivos PNG
     private String obtenerRutaImagen(TipoCasilla tipo) {
         switch (tipo) {
             case OSO: return "/resources/oso.png";
@@ -144,7 +144,7 @@ public class VistaTableroConImagenes {
     }
 
     
-     //ACTUALIZAR: Mueve las fichas de los jugadores por el tablero.
+     //ACTUALIZAR, Mueve las fichas de los jugadores por el tablero.
     
     public void actualizarPosiciones(controladorJugador controladorJugador, controladorTurnos controladorTurnos) {
         //LIMPIEZA, Quitamos las fichas antiguas para que no se amontonen
@@ -154,7 +154,6 @@ public class VistaTableroConImagenes {
             }
         }
 
-        // --- CORRECCIÓN CLAVE --- 
         // Obtenemos el jugador actual justo en el momento de pintar las fichas.
         // Si la IA acaba de terminar, 'controladorTurnos' ya debería apuntar a ti.
         Jugador jugadorConTurno = controladorTurnos.getJugadorActual();
@@ -169,14 +168,14 @@ public class VistaTableroConImagenes {
                 StackPane casilla = casillas[posicion];
                 javafx.scene.Node fichaVisual;
                 
-                // Intentamos poner la foto del pingüino
+                //Intentamos poner la foto del pingüino
                 try {
                     Image imgPingu = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
                     ImageView vistaPingu = new ImageView(imgPingu);
                     vistaPingu.setFitWidth(35);
                     vistaPingu.setPreserveRatio(true);
                     
-                    // Efecto de sombra con el color del jugador para distinguirlos
+                    //Efecto de sombra con el color del jugador para distinguirlos
                     vistaPingu.setStyle("-fx-effect: dropshadow(three-pass-box, " + obtenerColorJugador(i) + ", 10, 0, 0, 0);");
                     fichaVisual = vistaPingu;
                 } catch (Exception e) {
@@ -188,19 +187,22 @@ public class VistaTableroConImagenes {
                     fichaVisual = ficha;
                 }
 
-                // EFECTO DE TURNO: Comprobamos si el jugador que estamos dibujando es el que tiene el turno real
-                // Usamos el nombre o el objeto para asegurar que el parpadeo te siga a ti
-                // CAMBIO: Usamos comparación de nombres para evitar fallos de referencia de memoria
+                //EFECTO DE TURNO, Comprobamos si el jugador que estamos dibujando es el que tiene el turno real
+                //Usamos el nombre o el objeto para asegurar que el parpadeo te siga a ti
+                //Usamos comparación de nombres para evitar fallos de referencia de memoria
                 if (jugadorConTurno != null && j.getNombre().equals(jugadorConTurno.getNombre())) {
                     FadeTransition parpadeo = new FadeTransition(Duration.millis(500), fichaVisual);
-                    parpadeo.setFromValue(1.0); // Brillo total
-                    parpadeo.setToValue(0.3);   // Casi invisible
+                    parpadeo.setFromValue(1.0); 
+                    //Brillo total
+                    parpadeo.setToValue(0.3);   
+                    //Casi invisible
                     parpadeo.setCycleCount(Timeline.INDEFINITE);
                     parpadeo.setAutoReverse(true);
-                    parpadeo.play(); // ¡A parpadear!
+                    parpadeo.play(); 
+                    //A parpadear, has flipao eh
                 }
 
-                // Mandamos la ficha a la esquina inferior derecha
+                //Mandamos la ficha a la esquina inferior derecha
                 StackPane.setAlignment(fichaVisual, Pos.BOTTOM_RIGHT);
                 casilla.getChildren().add(fichaVisual); 
             }

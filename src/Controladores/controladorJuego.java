@@ -43,18 +43,17 @@ public class controladorJuego {
         this.controladorEventos = new controladorEventos(); 
         //Instanciamos el controlador de eventos
 
-        // --- CONEXIÓN DE CONTROLADORES ---
-        // Vinculamos el gestor de turnos con este controlador principal para detectar la victoria
+        //CONEXIÓN DE CONTROLADORES
+        //Vinculamos el gestor de turnos con este controlador principal para detectar la victoria
         this.controladorTurnos.setControladorJuego(this);
     }
 
-    // --- MÉTODOS DE BASE DE DATOS PARA EL PROYECTO ---
-    // Estos métodos conectan el corazón del juego con Oracle SQL
+    //MÉTODOS DE BASE DE DATOS PARA EL PROYECTO
+    //Estos métodos conectan el corazón del juego con Oracle SQL
 
-    /**
-     * Busca un usuario por nombre y contraseña. Si no existe, lo registra (INSERT).
-     * Devuelve el ID para poder usarlo en las partidas.
-     */
+    //Busca un usuario por nombre y contraseña. Si no existe, lo registra (INSERT).
+    //Devuelve el ID para poder usarlo en las partidas.
+    
     public int registrarOLogearUsuario(String nombre, String password) {
         int idEncontrado = -1;
         // Ajustado: Buscamos por nombre y contraseña para validar el acceso
@@ -62,21 +61,21 @@ public class controladorJuego {
         String sqlInsertar = "INSERT INTO JUGADORS (NOM, PASSWORD) VALUES (?, ?)";
 
         try (Connection con = Modelo.ConexionBD.conectar()) {
-            // Desactivamos el autoCommit para gestionar el guardado manualmente
+            //Desactivamos el autoCommit para gestionar el guardado manualmente
             con.setAutoCommit(false);
 
-            // 1. Intentamos buscar si el usuario ya existe con esa contraseña
+            //Intentamos buscar si el usuario ya existe con esa contraseña
             PreparedStatement psBusca = con.prepareStatement(sqlBuscar);
             psBusca.setString(1, nombre);
             psBusca.setString(2, password);
             ResultSet rs = psBusca.executeQuery();
 
             if (rs.next()) {
-                // Si existe, recuperamos su ID
+                //Si existe, recuperamos su ID
                 idEncontrado = rs.getInt("ID");
                 System.out.println("LOG: Login correcto. ID: " + idEncontrado);
             } else {
-                // Comprobamos si el nombre existe pero la contraseña está mal
+                //Comprobamos si el nombre existe pero la contraseña está mal
                 String sqlExisteNom = "SELECT ID FROM JUGADORS WHERE NOM = ?";
                 PreparedStatement psCheck = con.prepareStatement(sqlExisteNom);
                 psCheck.setString(1, nombre);
@@ -85,17 +84,17 @@ public class controladorJuego {
                     return -1; // Error de credenciales
                 }
 
-                // 2. Si no existe el nombre, lo registramos como nuevo usuario
+                //Si no existe el nombre, lo registramos como nuevo usuario
                 PreparedStatement psInserta = con.prepareStatement(sqlInsertar);
                 psInserta.setString(1, nombre);
                 psInserta.setString(2, password);
                 psInserta.executeUpdate();
                 
-                // Confirmamos la transacción en Oracle
+                //Confirmamos la transacción en Oracle
                 con.commit(); 
                 System.out.println("LOG: Nuevo usuario '" + nombre + "' registrado con éxito.");
                 
-                // Obtenemos el ID generado por el Trigger/Secuencia
+                //Obtenemos el ID generado por el Trigger/Secuencia
                 psBusca.setString(1, nombre);
                 psBusca.setString(2, password);
                 ResultSet rs2 = psBusca.executeQuery();
@@ -107,17 +106,16 @@ public class controladorJuego {
         return idEncontrado;
     }
 
-    /**
-     * Muestra el récord histórico del jugador llamando a la Función (F) de PL/SQL.
-     * Recibe el ID real del jugador que ha iniciado sesión.
-     */
+    //Muestra el récord histórico del jugador llamando a la Función (F) de PL/SQL.
+    //Recibe el ID real del jugador que ha iniciado sesión.
+
     public void mostrarMiRecord(int idUsuario) {
         try (Connection con = Modelo.ConexionBD.conectar()) {
-            // Llamamos a la Función (F) que creamos en SQL
+            //Llamamos a la Función (F) que creamos en SQL
             java.sql.CallableStatement cs = con.prepareCall("{? = call FN_RECORD_JUGADOR(?)}");
             
-            cs.registerOutParameter(1, java.sql.Types.INTEGER); // El récord que devuelve
-            cs.setInt(2, idUsuario); // Pasamos el ID dinámico
+            cs.registerOutParameter(1, java.sql.Types.INTEGER); //El récord que devuelve
+            cs.setInt(2, idUsuario); //Pasamos el ID dinámico
             
             cs.execute();
             int record = cs.getInt(1);
@@ -125,31 +123,30 @@ public class controladorJuego {
             System.out.println("Tu récord actual guardado en la nube es: " + record);
             
         } catch (Exception e) {
-            // Si el jugador es nuevo y no tiene partidas, saltará este mensaje informativo
+            //Si el jugador es nuevo y no tiene partidas, saltará este mensaje informativo
             System.out.println("INFO: Aún no tienes récord en la tabla PARTIDES: " + e.getMessage());
         }
     }
 
-    /**
-     * Registra el resultado de la partida en la tabla PARTIDES de Oracle.
-     * Se llama cuando el pingüino llega a la meta.
-     */
+    //Registra el resultado de la partida en la tabla PARTIDES de Oracle.
+    //Se llama cuando el pingüino llega a la meta.
+    
     public void registrarNuevaPartida(int idJugador, int puntuacion, String haGanado) {
-        // Validación de seguridad para DAM: No intentamos insertar si el ID no es válido
+        //Validación de seguridad para DAM: No intentamos insertar si el ID no es válido
         if (idJugador <= 0) {
             System.out.println("ERROR: No se puede guardar. ID de jugador no válido.");
             return;
         }
 
-        // SQL para insertar la partida. 
-        // No incluimos ID_PARTIDA porque el Trigger lo pone solo usando la secuencia.
+        //SQL para insertar la partida. 
+        //No incluimos ID_PARTIDA porque el Trigger lo pone solo usando la secuencia.
         String sql = "INSERT INTO PARTIDES (ID_JUGADOR, PUNTUACIO, GUANYADA) VALUES (?, ?, ?)";
 
         try (Connection con = Modelo.ConexionBD.conectar()) {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, idJugador);
             ps.setInt(2, puntuacion);
-            ps.setString(3, haGanado); // Recibe 'S' o 'N'
+            ps.setString(3, haGanado); //Recibe 'S' o 'N'
             
             ps.executeUpdate();
             System.out.println("LOG: Partida guardada con éxito en Oracle para el ID: " + idJugador);
@@ -159,14 +156,13 @@ public class controladorJuego {
         }
     }
 
-    /**
-     * Obtiene el número de victorias llamando a la función obligatoria del mínimo.
-     */
+    //Obtiene el número de victorias llamando a la función obligatoria del mínimo.
+    //
     public void mostrarVictoriasTotales(int idUsuario) {
         try (Connection con = Modelo.ConexionBD.conectar()) {
             java.sql.CallableStatement cs = con.prepareCall("{? = call FN_PARTIDES_GUANYADES(?)}");
             
-            // CORRECCIÓN AQUÍ: Es java.sql.Types.INTEGER
+
             cs.registerOutParameter(1, java.sql.Types.INTEGER);
             
             cs.setInt(2, idUsuario);
@@ -183,32 +179,30 @@ public class controladorJuego {
         try (Connection con = Modelo.ConexionBD.conectar()) {
             java.sql.CallableStatement cs = con.prepareCall("{call SP_RANKING_PARTIDAS()}");
             cs.execute();
-            // Esto ejecutará la lógica en el servidor Oracle.
+            //Esto ejecutará la lógica en el servidor Oracle.
         } catch (SQLException e) {
             System.out.println("Error al ejecutar ranking: " + e.getMessage());
         }
     }
 
-    /**
-     * Verifica si el jugador ha llegado a la casilla 50 (índice 49).
-     * Si es así, muestra la pantalla de victoria y guarda los datos.
-     */
+    //Verifica si el jugador ha llegado a la casilla 50 (índice 49).
+    //Si es así, muestra la pantalla de victoria y guarda los datos.
+
     public void comprobarVictoria(Modelo.Jugador jugador) {
-        // En Java los índices empiezan en 0, así que la casilla 50 es la posición 49
+        //En Java los índices empiezan en 0, así que la casilla 50 es la posición 49
         if (jugador.getPosicion() >= 49) {
             
-            // --- CAMBIO PARA EL GUARDADO ---
-            // Primero registramos la victoria en la base de datos
+            //Primero registramos la victoria en la base de datos
             int puntosFinales = 100; 
             registrarNuevaPartida(jugador.getId(), puntosFinales, "S");
             
-            // Luego mostramos el cartel (así el usuario sabe que ya se ha guardado)
+            //Luego mostramos el cartel (así el usuario sabe que ya se ha guardado)
             JOptionPane.showMessageDialog(null, 
                 "¡ENHORABUENA " + jugador.getNombre().toUpperCase() + "!\nHas llegado a la meta y tu victoria se ha guardado en la nube.", 
                 "Fin de la Partida - Penguin Race", 
                 JOptionPane.INFORMATION_MESSAGE);
             
-            // Cerramos el juego de forma limpia al terminar
+            //Cerramos el juego de forma limpia al terminar
             System.exit(0);
         }
     }

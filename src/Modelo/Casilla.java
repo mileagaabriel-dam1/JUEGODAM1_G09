@@ -63,7 +63,7 @@ public class Casilla {
         }
     }
 
-    // Método para describir el efecto de la casilla al jugador
+    //Método para describir el efecto de la casilla al jugador
     public String getDescripcion() {
         if (entidad != null) {
             //Si hay entidad, ella nos dice qué hace (ej: "Retrocedes 3 casillas")
