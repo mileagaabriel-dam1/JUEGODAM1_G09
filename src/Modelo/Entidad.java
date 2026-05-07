@@ -9,6 +9,9 @@ package Modelo;
 //(como Oso, Agujero o Trineo) a que implementen estos métodos obligatoriamente.
 
 public interface Entidad {
+	//Esto no es una clase, IMPORTANTE, es una lista de métodos
+	//Gracias a esto sabemos que las entidades q usen esta lista, tendran los métodos de abajo.
+	//Aqui principalmente se ponen métodos abstractos, y constantes(no es muy comun)
     //Entidad, (o Randy, es una clase la cual tiene su própio "molde", por asi decirlo)
 	
 	

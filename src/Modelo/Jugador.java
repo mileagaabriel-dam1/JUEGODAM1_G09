@@ -6,6 +6,10 @@ import java.util.List;
 
 public class Jugador {
 
+    // --- NUEVO ATRIBUTO PARA ORACLE ---
+    private int id; 
+    // Su identificador único en la tabla JUGADORS
+
     //Atributos privados, Encapsulamiento puro. Solo el jugador sabe sus secretos.
     private String nombre;
     private String color;
@@ -35,6 +39,10 @@ public class Jugador {
         this.historial = new ArrayList<>(); 
         //Inicializamos la lista de acciones
     }
+
+    // --- NUEVOS MÉTODOS PARA EL ID ---
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
     //El motor de movimiento, Genera un número aleatorio entre 1 y 6.
     //Usamos (int)(Math.random() * 6) que da de 0 a 5, y sumamos 1.

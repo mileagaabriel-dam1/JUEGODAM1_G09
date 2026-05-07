@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane; // Importamos la librería para mostrar ventanas emergentes (pantalla de victoria)
 
 public class controladorJuego { 
     //Esta es la clase "corazón" que centraliza todos los subsistemas del juego(Objeto maestro)
@@ -41,6 +42,10 @@ public class controladorJuego {
         
         this.controladorEventos = new controladorEventos(); 
         //Instanciamos el controlador de eventos
+
+        // --- CONEXIÓN DE CONTROLADORES ---
+        // Vinculamos el gestor de turnos con este controlador principal para detectar la victoria
+        this.controladorTurnos.setControladorJuego(this);
     }
 
     // --- MÉTODOS DE BASE DE DATOS PARA EL PROYECTO ---
@@ -91,6 +96,8 @@ public class controladorJuego {
                 System.out.println("LOG: Nuevo usuario '" + nombre + "' registrado con éxito.");
                 
                 // Obtenemos el ID generado por el Trigger/Secuencia
+                psBusca.setString(1, nombre);
+                psBusca.setString(2, password);
                 ResultSet rs2 = psBusca.executeQuery();
                 if (rs2.next()) idEncontrado = rs2.getInt("ID");
             }
@@ -105,8 +112,7 @@ public class controladorJuego {
      * Recibe el ID real del jugador que ha iniciado sesión.
      */
     public void mostrarMiRecord(int idUsuario) {
-        try {
-            Connection con = Modelo.ConexionBD.conectar();
+        try (Connection con = Modelo.ConexionBD.conectar()) {
             // Llamamos a la Función (F) que creamos en SQL
             java.sql.CallableStatement cs = con.prepareCall("{? = call FN_RECORD_JUGADOR(?)}");
             
@@ -128,21 +134,82 @@ public class controladorJuego {
      * Registra el resultado de la partida en la tabla PARTIDES de Oracle.
      * Se llama cuando el pingüino llega a la meta.
      */
-    public void registrarNuevaPartida(int idJugador, int puntuacion) {
+    public void registrarNuevaPartida(int idJugador, int puntuacion, String haGanado) {
+        // Validación de seguridad para DAM: No intentamos insertar si el ID no es válido
+        if (idJugador <= 0) {
+            System.out.println("ERROR: No se puede guardar. ID de jugador no válido.");
+            return;
+        }
+
         // SQL para insertar la partida. 
-        // Usamos SYSDATE para que Oracle ponga la fecha y hora actual automáticamente.
-        String sql = "INSERT INTO PARTIDES (ID_JUGADOR, PUNTUACIO, DATA_PARTIDA) VALUES (?, ?, SYSDATE)";
+        // No incluimos ID_PARTIDA porque el Trigger lo pone solo usando la secuencia.
+        String sql = "INSERT INTO PARTIDES (ID_JUGADOR, PUNTUACIO, GUANYADA) VALUES (?, ?, ?)";
 
         try (Connection con = Modelo.ConexionBD.conectar()) {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, idJugador);
             ps.setInt(2, puntuacion);
+            ps.setString(3, haGanado); // Recibe 'S' o 'N'
             
             ps.executeUpdate();
-            System.out.println("LOG: Partida guardada con éxito para el ID: " + idJugador);
+            System.out.println("LOG: Partida guardada con éxito en Oracle para el ID: " + idJugador);
             
         } catch (SQLException e) {
             System.out.println("ERROR al guardar la partida en la base de datos: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Obtiene el número de victorias llamando a la función obligatoria del mínimo.
+     */
+    public void mostrarVictoriasTotales(int idUsuario) {
+        try (Connection con = Modelo.ConexionBD.conectar()) {
+            java.sql.CallableStatement cs = con.prepareCall("{? = call FN_PARTIDES_GUANYADES(?)}");
+            
+            // CORRECCIÓN AQUÍ: Es java.sql.Types.INTEGER
+            cs.registerOutParameter(1, java.sql.Types.INTEGER);
+            
+            cs.setInt(2, idUsuario);
+            cs.execute();
+            System.out.println("Total de partidas ganadas: " + cs.getInt(1));
+        } catch (SQLException e) {
+            System.out.println("Error al obtener victorias: " + e.getMessage());
+        }
+    }
+
+    //Ejecuta el procedimiento de ranking de viciados (P) del informe.
+    
+    public void imprimirRankingViciados() {
+        try (Connection con = Modelo.ConexionBD.conectar()) {
+            java.sql.CallableStatement cs = con.prepareCall("{call SP_RANKING_PARTIDAS()}");
+            cs.execute();
+            // Esto ejecutará la lógica en el servidor Oracle.
+        } catch (SQLException e) {
+            System.out.println("Error al ejecutar ranking: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Verifica si el jugador ha llegado a la casilla 50 (índice 49).
+     * Si es así, muestra la pantalla de victoria y guarda los datos.
+     */
+    public void comprobarVictoria(Modelo.Jugador jugador) {
+        // En Java los índices empiezan en 0, así que la casilla 50 es la posición 49
+        if (jugador.getPosicion() >= 49) {
+            
+            // --- CAMBIO PARA EL GUARDADO ---
+            // Primero registramos la victoria en la base de datos
+            int puntosFinales = 100; 
+            registrarNuevaPartida(jugador.getId(), puntosFinales, "S");
+            
+            // Luego mostramos el cartel (así el usuario sabe que ya se ha guardado)
+            JOptionPane.showMessageDialog(null, 
+                "¡ENHORABUENA " + jugador.getNombre().toUpperCase() + "!\nHas llegado a la meta y tu victoria se ha guardado en la nube.", 
+                "Fin de la Partida - Penguin Race", 
+                JOptionPane.INFORMATION_MESSAGE);
+            
+            // Cerramos el juego de forma limpia al terminar
+            System.exit(0);
         }
     }
 

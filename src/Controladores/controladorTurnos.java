@@ -16,10 +16,19 @@ public class controladorTurnos {
     //Índice numérico que representa la posición en la lista del jugador que tiene el turno
     private int turnoActual;
 
+    // --- NUEVO ATRIBUTO PARA CONECTAR CON EL CORAZÓN DEL JUEGO ---
+    private controladorJuego gestorPrincipal;
+
     //Constructor del controlador
     public controladorTurnos() {
         //Al iniciar la clase, el turno comienza siempre en el primer jugador (índice 0)
         this.turnoActual = 0;
+    }
+
+    // --- MÉTODO PARA ASIGNAR EL CONTROLADOR PRINCIPAL ---
+    public void setControladorJuego(controladorJuego gestor) {
+        // Vinculamos este controlador con el controlador maestro
+        this.gestorPrincipal = gestor;
     }
 
     //Método para vincular la lista de jugadores con este gestor y reiniciar el contador
@@ -50,6 +59,23 @@ public class controladorTurnos {
         //Comprobamos de nuevo que haya jugadores para poder operar
     	
         if (jugadores != null && !jugadores.isEmpty()) {
+
+            // --- CHEQUEO DE VICTORIA ANTES DE CAMBIAR ---
+            // Antes de pasar al siguiente, miramos si el que acaba de mover ha ganado
+            if (gestorPrincipal != null) {
+                // Obtenemos al que acaba de tirar y miramos si está en la meta
+                Jugador jugadorQueAcabaDeMover = getJugadorActual();
+                
+                // Si el jugador ya está en la casilla 49 (casilla 50 real), llamamos a victoria
+                if (jugadorQueAcabaDeMover.getPosicion() >= 49) {
+                    gestorPrincipal.comprobarVictoria(jugadorQueAcabaDeMover);
+                    return; // IMPORTANTE: Si ha ganado, salimos del método y NO pasamos el turno
+                }
+            }
+
+            // --- CHIVATO PARA CONSOLA ---
+            System.out.println("LOG: Pasando el turno del jugador: " + getJugadorActual().getNombre());
+
             turnoActual = (turnoActual + 1) % jugadores.size();
             //A ver, sencillo, estas lineas son para controlar el orden de los jugadores.
             //Es una lógica circular, no la hemos dado en clase.

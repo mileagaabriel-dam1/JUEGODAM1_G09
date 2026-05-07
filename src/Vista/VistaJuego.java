@@ -168,6 +168,13 @@ public class VistaJuego {
                     
                     // REFRESCAMOS para que se vea la posición final antes de terminar
                     tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
+
+                    // --- NUEVO: LLAMAMOS AL CARTEL DE VICTORIA Y GUARDADO EN ORACLE ---
+                    // Usamos Platform.runLater para que la ventana emergente no bloquee la animación de JavaFX
+                    Platform.runLater(() -> {
+                        principal.getControladorJuego().comprobarVictoria(jugador);
+                    });
+                    
                     return;
                 }
 

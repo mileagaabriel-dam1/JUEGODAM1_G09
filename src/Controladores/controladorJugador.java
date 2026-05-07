@@ -50,8 +50,17 @@ public class controladorJugador {
             // Si es el primer jugador, usamos el nombre que viene de la Base de Datos
             String nombreFinal = (i == 1 && nombreUsuarioLogueado != null) ? nombreUsuarioLogueado : "Jugador " + i;
             
+            // Creamos el objeto Jugador
+            Jugador nuevoJugador = new Jugador(nombreFinal, obtenerColor(i), TipoJugador.HUMANO);
+
+            // --- VINCULACIÓN CON ORACLE ---
+            // Si es el jugador principal (el que se logueó), le asignamos su ID de la base de datos
+            if (i == 1 && idUsuarioLogueado > 0) {
+                nuevoJugador.setId(idUsuarioLogueado);
+            }
+            
             //Creamos un nuevo objeto Jugador y lo metemos en la lista
-            jugadores.add(new Jugador(nombreFinal, obtenerColor(i), TipoJugador.HUMANO));
+            jugadores.add(nuevoJugador);
         } 
         //Fin del bucle for
 
@@ -87,6 +96,19 @@ public class controladorJugador {
     	
         
         System.out.println("¡" + ganador.getNombre() + " ha ganado!");
+
+        // --- CONEXIÓN CON ORACLE AL FINALIZAR ---
+        // Si el ganador es el humano que se logueó (tiene ID > 0)
+        if (ganador.getId() > 0) {
+            // Calculamos una puntuación (por ejemplo, 100 puntos por ganar)
+            int puntosFinales = 100; 
+            
+            // Llamamos al método de la base de datos para guardar
+            // Usamos 'S' porque este método se llama al ganar
+            Modelo.ConexionBD.guardarPartida(ganador.getId(), puntosFinales, "S");
+            
+            System.out.println("LOG: Victoria de " + ganador.getNombre() + " guardada en Oracle.");
+        }
     }
 } 
 //Fin de la clase controladorJugador
