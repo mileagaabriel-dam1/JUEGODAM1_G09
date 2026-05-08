@@ -157,8 +157,17 @@ public class VistaJuego {
                     //Avisamos si pasó algo extra
                 }
 
+                // --- PELEA DE BOLAS DE NIEVE (COLISIÓN) ---
+                // Revisamos si al caer aquí hay otro pingüino para pelear
+                String mensajePelea = controladorEventos.gestionarPelea(jugador, controladorTurnos.getJugadores());
+                if (mensajePelea != null) {
+                    principal.getVistaEventos().agregarEvento(mensajePelea);
+                    // Si alguien ha retrocedido por la pelea, actualizamos el dibujo del tablero
+                    tablero.actualizarPosiciones(principal.getControladorJugador(), controladorTurnos);
+                }
+
                 //FINAL, ¿Alguien ha llegado a la meta (casilla 49)?
-                if (destino == 49) {
+                if (jugador.getPosicion() == 49) {
                     principal.getVistaEventos().agregarEvento("🎉 ¡" + jugador.getNombre() + " HA GANADO! 🎉");
                     juegoActivo = false; 
                     //Paramos el juego

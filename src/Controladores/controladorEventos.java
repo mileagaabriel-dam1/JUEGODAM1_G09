@@ -2,6 +2,7 @@ package Controladores; // Indicamos que esta clase vive en el paquete de Control
 
 import Modelo.*; 
 //Importamos todas las clases del modelo (Jugador, Casilla, etc.) para poder usarlas
+import java.util.List;
 
 public class controladorEventos { 
 	//Definición de la clase que gestionará la lógica de las casillas
@@ -118,5 +119,36 @@ public class controladorEventos {
 
         return mensaje; 
         //Retornamos el resultado del evento aleatorio
+    }
+
+    // --- NUEVO MÉTODO: PELEA DE BOLAS DE NIEVE ---
+    public String gestionarPelea(Jugador actual, List<Jugador> lista) {
+        // Recorremos la lista de jugadores para ver si alguien está en nuestra misma casilla
+        for (Jugador oponente : lista) {
+            
+            // Si el oponente no soy yo mismo y estamos en la misma posición...
+            if (!oponente.getNombre().equals(actual.getNombre()) && oponente.getPosicion() == actual.getPosicion()) {
+                
+                // Calculamos la fuerza de cada uno (Número del 1 al 10)
+                int fuerzaActual = (int)(Math.random() * 10) + 1;
+                int fuerzaOponente = (int)(Math.random() * 10) + 1;
+                
+                if (fuerzaActual > fuerzaOponente) {
+                    // Si gano yo, el oponente retrocede 3 casillas (mínimo casilla 0)
+                    oponente.setPosicion(Math.max(0, oponente.getPosicion() - 3));
+                    return "❄️ ¡Pelea! " + actual.getNombre() + " gana. " + oponente.getNombre() + " retrocede 3 casillas.";
+                } 
+                else if (fuerzaOponente > fuerzaActual) {
+                    // Si gana él, yo retrocedo 3 casillas
+                    actual.setPosicion(Math.max(0, actual.getPosicion() - 3));
+                    return "❄️ ¡Pelea! " + oponente.getNombre() + " gana. " + actual.getNombre() + " retrocede 3 casillas.";
+                } 
+                else {
+                    // En caso de empate, ambos se quedan congelados en el sitio
+                    return "❄️ ¡Empate! Los pingüinos están exhaustos y se quedan en la casilla.";
+                }
+            }
+        }
+        return null; // Si no hay nadie en la casilla, no hay pelea
     }
 }
