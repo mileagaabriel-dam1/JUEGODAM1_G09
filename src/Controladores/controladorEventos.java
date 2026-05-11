@@ -1,4 +1,4 @@
-package Controladores; // Indicamos que esta clase vive en el paquete de Controladores
+package Controladores; //Indicamos que esta clase vive en el paquete de Controladores
 
 import Modelo.*; 
 //Importamos todas las clases del modelo (Jugador, Casilla, etc.) para poder usarlas
@@ -30,7 +30,7 @@ public class controladorEventos {
 
             case OSO:
                 entidad = new Oso(); 
-                //Si es oso, creamos la instancia del enemigo
+                //Si es oso, creamos el objeto del enemigo
                 break;
 
             case AGUJERO:
@@ -73,6 +73,7 @@ public class controladorEventos {
     	
         int evento = (int)(Math.random() * 5);
         //Generamos un número entero aleatorio entre 0 y 4 usando casting a (int)
+        //Casting: De Int a Double, o al reves.
 
         String mensaje = "  ❓ "; 
         //Icono visual para el mensaje de evento
@@ -121,34 +122,46 @@ public class controladorEventos {
         //Retornamos el resultado del evento aleatorio
     }
 
-    // --- NUEVO MÉTODO: PELEA DE BOLAS DE NIEVE ---
+ //PELEA DE NIEVE
     public String gestionarPelea(Jugador actual, List<Jugador> lista) {
-        // Recorremos la lista de jugadores para ver si alguien está en nuestra misma casilla
+        //Recorremos la lista de jugadores para buscar colisiones
         for (Jugador oponente : lista) {
             
-            // Si el oponente no soy yo mismo y estamos en la misma posición...
+            //Verificamos que no sea el mismo jugador y que coincidan en la baldosa
             if (!oponente.getNombre().equals(actual.getNombre()) && oponente.getPosicion() == actual.getPosicion()) {
+             //Se verifica que el jugador no sea el mismo que acaba de tirar el dado
+             //.equals para comparar el contenido de esa posición.
+             //Esta linea se pone porque en "lista", estan todos los jugadores, sin esta verificacion te tirarias una bola de nieve a ti mismo
+            	
+            	
+                //LÓGICA DE NEGOCIO: COMPARACIÓN DE INVENTARIO
+                //Extraemos la cantidad de bolas de nieve de cada uno
+                int bolasActual = actual.getInventario().getBolasNieve();
+                int bolasOponente = oponente.getInventario().getBolasNieve();
                 
-                // Calculamos la fuerza de cada uno (Número del 1 al 10)
-                int fuerzaActual = (int)(Math.random() * 10) + 1;
-                int fuerzaOponente = (int)(Math.random() * 10) + 1;
-                
-                if (fuerzaActual > fuerzaOponente) {
-                    // Si gano yo, el oponente retrocede 3 casillas (mínimo casilla 0)
+                if (bolasActual > bolasOponente) {
+                    //Gana el jugador actual por tener más arsenal
                     oponente.setPosicion(Math.max(0, oponente.getPosicion() - 3));
-                    return "❄️ ¡Pelea! " + actual.getNombre() + " gana. " + oponente.getNombre() + " retrocede 3 casillas.";
+                    //Esto esta para que el pinguino no se vaya del tablero, y se quede minimo en la casilla 0
+
+                    actual.getInventario().quitarBolaNieve();
+                    //Consumimos una bola por el esfuerzo de la pelea
+
+                    return "¡PELEA! " + actual.getNombre() + " gana por superioridad numérica (" + bolasActual + " vs " + bolasOponente + ").";
                 } 
-                else if (fuerzaOponente > fuerzaActual) {
-                    // Si gana él, yo retrocedo 3 casillas
+                else if (bolasOponente > bolasActual) {
+                    //Gana el oponente
                     actual.setPosicion(Math.max(0, actual.getPosicion() - 3));
-                    return "❄️ ¡Pelea! " + oponente.getNombre() + " gana. " + actual.getNombre() + " retrocede 3 casillas.";
+                    //Esto esta para que el pinguino no se vaya del tablero, y se quede minimo en la casilla 0
+                    oponente.getInventario().quitarBolaNieve();
+                    return "¡PELEA! " + oponente.getNombre() + " gana la batalla de nieve. " + actual.getNombre() + " retrocede.";
                 } 
                 else {
-                    // En caso de empate, ambos se quedan congelados en el sitio
-                    return "❄️ ¡Empate! Los pingüinos están exhaustos y se quedan en la casilla.";
+                    //EMPATE TÉCNICO, Si tienen las mismas, se quedan en la casilla
+                    return "¡EMPATE! Ambos tienen " + bolasActual + " bolas. Se miran fijamente pero nadie lanza.";
                 }
             }
         }
-        return null; // Si no hay nadie en la casilla, no hay pelea
+        return null; 
     }
 }
