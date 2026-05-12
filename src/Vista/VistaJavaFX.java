@@ -25,7 +25,7 @@ import javafx.scene.image.ImageView;
 
 
 //Esta es la clase principal de la interfaz. 
-//'extends Application' le da los superpoderes de JavaFX para abrir ventanas.
+//'extends Application' le da los permisos de JavaFX para abrir ventanas.
 
 public class VistaJavaFX extends Application {
 
