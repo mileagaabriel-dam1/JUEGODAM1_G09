@@ -91,7 +91,8 @@ public class VistaJavaFX extends Application {
         GridPane grid = new GridPane();
         grid.setHgap(10); // Espacio horizontal entre columnas
         grid.setVgap(10); // Espacio vertical entre filas
-        grid.setPadding(new Insets(20, 150, 10, 10)); // Margen alrededor del formulario
+        grid.setPadding(new Insets(20, 150, 10, 10)); 
+        //Margen alrededor del formulario
 
         //LOS CAMPOS DE ENTRADA: Uno normal para el nombre y otro de tipo "Password" para que se vean asteriscos
         TextField username = new TextField();
