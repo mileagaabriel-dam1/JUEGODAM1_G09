@@ -12,6 +12,7 @@ public class controladorTurnos {
 
     //Atributo privado que guarda la lista de jugadores que están en la partida
     private List<Jugador> jugadores;
+    //List = Lista de objetos
     
     //Índice numérico que representa la posición en la lista del jugador que tiene el turno
     private int turnoActual;

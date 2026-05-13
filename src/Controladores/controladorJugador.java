@@ -49,6 +49,8 @@ public class controladorJugador {
         	
             //Si es el primer jugador, usamos el nombre que viene de la Base de Datos
             String nombreFinal = (i == 1 && nombreUsuarioLogueado != null) ? nombreUsuarioLogueado : "Jugador " + i;
+            // ? = Si el jugador es el primero de la lista, y el nombre esta logueado, se le asignara el valor de 'nombreUsuarioLogueado'
+            // : = Si NO es el primero de la lista, se le asignara el nombre de 'Jugador' mas el numero de la lista que le toca
             
             //Creamos el objeto Jugador
             Jugador nuevoJugador = new Jugador(nombreFinal, obtenerColor(i), TipoJugador.HUMANO);

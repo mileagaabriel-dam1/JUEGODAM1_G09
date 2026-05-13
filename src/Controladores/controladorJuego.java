@@ -146,7 +146,7 @@ public class controladorJuego {
                 //Creamos otra lista de resultados, y una consulta (executeQuery)
                 
                 if (rs2.next()) idEncontrado = rs2.getInt("ID");
-                //Cando ya tengamos el ID que ORACLE ha creado, lo ponemos en la variable de JAVA
+                //Cuando ya tengamos el ID que ORACLE ha creado, lo ponemos en la variable de JAVA
             }
         } catch (SQLException e) {
             System.out.println("ERROR en Registro/Login: " + e.getMessage());
