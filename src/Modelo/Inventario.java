@@ -22,7 +22,7 @@ public class Inventario {
     public Inventario() {
         items = new HashMap<>();
         //Un hashmap es como un arraylist, pero tu le pones una etiqueta a cada cosa.
-        //Inicializamos los valores por defecto, Randy nos regala 2 peces y 1 dado para empezar
+        //Inicializamos los valores por defecto, nos regala 2 peces y 1 dado para empezar
         items.put(Item.TipoItem.PEZ, 2);
         items.put(Item.TipoItem.BOLA_NIEVE, 0);
         items.put(Item.TipoItem.DADO, 1);
@@ -108,7 +108,7 @@ public class Inventario {
             "🐟: %d/2 | ⛄: %d/6 | 🎲: %d/3",
             getPeces(), getBolasNieve(), getDados()
             
-            //%d es un marcador de posición(la d viene de decimal), por asi decirl
+            //%d es un marcador de posición(la d viene de decimal), por asi decirlo
             //El primer %d se cambia, por lo que devuelve "getPeces"
             //El segundo &d lo mismo, pero por getBolasNieve
             //El tercer %d, por getDados

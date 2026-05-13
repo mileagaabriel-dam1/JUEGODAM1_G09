@@ -83,43 +83,55 @@ public class VistaJavaFX extends Application {
             //Si no hay foto, el diálogo se muestra solo con texto
         }
 
-        //Configuramos los botones de la ventana
+     //Creamos el botón personalizado de "Entrar" y el de "Cancelar" que ya viene por defecto
         ButtonType loginButtonType = new ButtonType("Entrar", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
 
-        //Creamos el contenedor para los campos de texto
+        //EL CONTENEDOR: Usamos un GridPane para que las etiquetas y los cuadros de texto queden alineados
         GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.setHgap(10); // Espacio horizontal entre columnas
+        grid.setVgap(10); // Espacio vertical entre filas
+        grid.setPadding(new Insets(20, 150, 10, 10)); // Margen alrededor del formulario
 
+        //LOS CAMPOS DE ENTRADA: Uno normal para el nombre y otro de tipo "Password" para que se vean asteriscos
         TextField username = new TextField();
-        username.setPromptText("Nombre");
+        username.setPromptText("Nombre"); // Texto gris que desaparece al escribir
         PasswordField password = new PasswordField();
         password.setPromptText("Contraseña");
 
-        grid.add(new Label("Usuario:"), 0, 0);
-        grid.add(username, 1, 0);
-        grid.add(new Label("Contraseña:"), 0, 1);
-        grid.add(password, 1, 1);
+        //COLOCACIÓN EN LA REJILLA: (Elemento, Columna, Fila)
+        grid.add(new Label("Usuario:"), 0, 0);   
+        //Etiqueta en col 0, fila 0
+        grid.add(username, 1, 0);               
+        //Cuadro de texto en col 1, fila 0
+        grid.add(new Label("Contraseña:"), 0, 1); 
+        //Etiqueta en col 0, fila 1
+        grid.add(password, 1, 1);               
+        //Cuadro de contraseña en col 1, fila 1
 
+        //Metemos la rejilla dentro del panel del diálogo
         dialog.getDialogPane().setContent(grid);
 
+        // LANZAMOS EL DIÁLOGO: El programa se para aquí hasta que el usuario pulse un botón
         Optional<ButtonType> result = dialog.showAndWait();
-        
+
         String nombreUsuario = "";
         String passUsuario = "";
 
+        //COMPROBAMOS LA RESPUESTA: ¿Ha pulsado el botón de "Entrar"?
         if (result.isPresent() && result.get() == loginButtonType){
-            //Normalizamos el nombre a mayúsculas para evitar duplicados en la BD
+            
+            //Normalizamos el nombre: quitamos espacios (trim) y lo pasamos a MAYÚSCULAS
+            //Esto es clave para que en la Base de Datos no haya líos con "paco" y "PACO"
             nombreUsuario = username.getText().trim().toUpperCase();
             passUsuario = password.getText().trim();
+            
             System.out.println("Intentando sesión para: " + nombreUsuario);
+            
         } else {
-            System.exit(0); // Si cancela, cerramos la aplicación
+            //Si el usuario cierra la ventana o da a cancelar, cerramos todo el programa
+            System.exit(0); 
         }
-
-
         //INICIAMOS LA LÓGICA
         //Creamos el "cerebro" y obtenemos sus partes
         controladorJuego = new controladorJuego();

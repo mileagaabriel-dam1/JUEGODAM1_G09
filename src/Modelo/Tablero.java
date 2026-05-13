@@ -28,7 +28,7 @@ public class Tablero {
         //Obtenemos un array con todos los valores posibles del Enum (OSO, FOCA, etc.)
         TipoCasilla[] tipos = TipoCasilla.values();
 
-        //Bucle para rellenar el resto del tablero (de la 1 a la 49)
+        //Bucle para rellenar el resto del tablero (de la 0 a la 49)
         for (int i = 1; i < TAMANO; i++) {
             //Generamos un índice aleatorio basado en la cantidad de tipos que existen
             int aleatorio = (int) (Math.random() * tipos.length);
@@ -56,7 +56,10 @@ public class Tablero {
         for (int i = 0; i < TAMANO; i++) {
             //Operador módulo (%): Si el resto de i/10 es 0, saltamos de línea (filas de 10)
             if (i % 10 == 0 && i > 0) {
+            	//El if se pone delante para que al llegar a 10 casillas generadas, haga un salto de fila.
+            	//Si dividimos por 10, y lo que queda es 0, cuando  es porque el numero es multiple de 10
                 System.out.println();
+                //CUANDO EL RESTO SEA CERO, LE DECIMOS QUE EMPIEZE DESDE LA CASILLA 1, HASTA 10, y asi siga imprimiendo lineas
             }
             //Pintamos el número de casilla y el símbolo de la entidad que vive allí
             System.out.print((i+1) + ":" + casillas.get(i).getSimbolo() + " ");
