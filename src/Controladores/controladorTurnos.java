@@ -72,6 +72,9 @@ public class controladorTurnos {
                     gestorPrincipal.comprobarVictoria(jugadorQueAcabaDeMover);
                     return; //IMPORTANTE, Si ha ganado, salimos del método y NO pasamos el turno
                 }
+
+                // 🧠 PROCESAMOS INTERACCIONES DEL EXAMEN TRAS EL MOVIMIENTO REALIZADO
+                evaluarNormasEnunciado(jugadorQueAcabaDeMover);
             }
 
             //Para saber de quien se acaba de pasar el turno
@@ -91,6 +94,69 @@ public class controladorTurnos {
             
             //Si hay 2 jugadores, pues lo mismo. pero dividido por 2.
 
+            // ==========================================================
+            // 🤖 🦭 TURNO AUTOMÁTICO DE LA IA: LAS FUNCIONES DE LA FOCA
+            // ==========================================================
+            Jugador nuevoJugadorActivo = getJugadorActual();
+            
+            if (nuevoJugadorActivo != null && nuevoJugadorActivo.getTipo() == Modelo.TipoJugador.IA) {
+                System.out.println("\n🤖 [Turno de la IA] Ejecutando funciones mecánicas de la Foca...");
+                
+                // 🎲 La foca lanza su dado de movimiento (del 1 al 6)
+                java.util.Random dadoFoca = new java.util.Random();
+                int tiradaIA = dadoFoca.nextInt(6) + 1;
+                System.out.println("🎲 La Foca (IA) tira el dado y saca un: " + tiradaIA);
+                
+                // Mueve a la Foca sin permitir que se pase del límite del mapa (casilla 49)
+                int nuevaPosicion = nuevoJugadorActivo.getPosicion() + tiradaIA;
+                nuevoJugadorActivo.setPosicion(Math.min(49, nuevaPosicion));
+                System.out.println("🦭 La Foca se desplaza a la casilla: " + (nuevoJugadorActivo.getPosicion() + 1));
+                
+                // Llamamos a que pase el turno automáticamente para que le vuelva a tocar al humano
+                // Usamos un pequeño retraso controlado en la cola de ejecución para que no se congele la vista
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    siguienteTurno();
+                });
+            }
+        }
+    }
+
+    // 🦭 MÉTODO PARA CUMPLIR LOS REQUISITOS OBLIGATORIOS DEL ENUNCIADO ❓
+    private void evaluarNormasEnunciado(Jugador jugadorActivo) {
+        if (gestorPrincipal == null || gestorPrincipal.getControladorTablero() == null) return;
+
+        // 1. COMPORTAMIENTO DE LA IA (LA FOCA): 
+        // Si el jugador activo es de tipo IA, ejecuta sus acciones específicas de personaje jugador
+        if (jugadorActivo.getTipo() == Modelo.TipoJugador.IA) {
+            System.out.println("🦭 Acciones de Foca activas para: " + jugadorActivo.getNombre());
+            
+            // Mecánica de interacción: Si la foca cae en la misma posición que un jugador humano, interactúa con él
+            for (Jugador j : jugadores) {
+                if (j.getTipo() != Modelo.TipoJugador.IA && j.getPosicion() == jugadorActivo.getPosicion()) {
+                    System.out.println("🦭 ¡La Foca ha chocado con " + j.getNombre() + "! Le mete un empujón.");
+                    j.setPosicion(Math.max(0, j.getPosicion() - 1)); // Retrasa al humano 1 casilla por contacto
+                }
+            }
+        }
+
+        // 2. EFECTO DE LA CASILLA DEL INTERROGANTE (?):
+        // Buscamos a través del gestor principal el tipo de casilla del tablero donde se encuentra el jugador
+        Modelo.Casilla casillaActual = gestorPrincipal.getControladorTablero().getCasilla(jugadorActivo.getPosicion());
+        
+        if (casillaActual != null && casillaActual.getTipo() == Modelo.TipoCasilla.INTERROGANTE) {
+            System.out.println("❓ ¡Casilla de INTERROGANTE (Evento Aleatorio) detectada para " + jugadorActivo.getNombre() + "!");
+            
+            // Requisito de azar mediante un dado de probabilidad al 50%
+            java.util.Random dadoAzar = new java.util.Random();
+            int suerte = dadoAzar.nextInt(2); // Escupe un número entre 0 y 1
+            
+            if (suerte == 0) {
+                System.out.println("✨ Evento Favorable: Avanza 2 casillas extra.");
+                jugadorActivo.setPosicion(Math.min(49, jugadorActivo.getPosicion() + 2));
+            } else {
+                System.out.println("❄️ Evento Desfavorable: Retrocede 2 casillas.");
+                jugadorActivo.setPosicion(Math.max(0, jugadorActivo.getPosicion() - 2));
+            }
         }
     }
 

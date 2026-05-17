@@ -20,21 +20,34 @@ public class Tablero {
     }
 
     //El "constructor de mundos", Rellena la lista de casillas.
-    
     private void generarTablero() {
         //Regla de Randy, La casilla 0 es sagrada, siempre es el inicio (Pingüino)
         casillas.add(new Casilla(0, TipoCasilla.PINGUINO));
 
-        //Obtenemos un array con todos los valores posibles del Enum (OSO, FOCA, etc.)
-        TipoCasilla[] tipos = TipoCasilla.values();
-
-        //Bucle para rellenar el resto del tablero (de la 0 a la 49)
+        //Bucle para rellenar el resto del tablero (de la 1 a la 49)
         for (int i = 1; i < TAMANO; i++) {
-            //Generamos un índice aleatorio basado en la cantidad de tipos que existen
-            int aleatorio = (int) (Math.random() * tipos.length);
             
-            //Creamos la casilla con ese tipo al azar y la añadimos a nuestra lista
-            casillas.add(new Casilla(i, tipos[aleatorio]));
+            // 🎲 GENERACIÓN CONTROLADA DE CASILLAS
+            // Usamos un número del 1 al 100 para repartir limpiamente los baches y premios
+            // del enunciado, asegurando que la Foca no se asigne jamás como casilla.
+            int probabilidad = (int) (Math.random() * 100) + 1;
+            
+            if (probabilidad <= 12) {
+                // 12% de probabilidad de que sea un Oso Polar
+                casillas.add(new Casilla(i, TipoCasilla.OSO));
+            } else if (probabilidad <= 24) {
+                // 12% de probabilidad de que sea un Agujero de Hielo
+                casillas.add(new Casilla(i, TipoCasilla.AGUJERO));
+            } else if (probabilidad <= 36) {
+                // 12% de probabilidad de que sea un Trineo para avanzar
+                casillas.add(new Casilla(i, TipoCasilla.TRINEO));
+            } else if (probabilidad <= 50) {
+                // 14% de probabilidad de que sea la casilla del INTERROGANTE ❓ (Tu evento aleatorio)
+                casillas.add(new Casilla(i, TipoCasilla.INTERROGANTE));
+            } else {
+                // El resto (50%) serán zonas libres representadas por el tipo base PINGUINO
+                casillas.add(new Casilla(i, TipoCasilla.PINGUINO));
+            }
         }
     }
 
@@ -50,7 +63,6 @@ public class Tablero {
 
     //Método de visualización por consola:
     //Sirve para que los programadores veamos si el mapa se ha creado bien.
-    
     public void mostrarTablero() {
         System.out.println("\n--- TABLERO (50 casillas) ---");
         for (int i = 0; i < TAMANO; i++) {
