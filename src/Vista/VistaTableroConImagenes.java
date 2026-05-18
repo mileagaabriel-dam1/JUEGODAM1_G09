@@ -109,7 +109,7 @@ public class VistaTableroConImagenes {
             //Usamos el método estático para mandarlo a la esquina superior izquierda
             StackPane.setAlignment(numero, Pos.TOP_LEFT);
 
-            //Juntamos las capas en el panel de la casilla
+            //Juntamos las capas en el panel de la casilla (Arreglado el nombre aquí)
             casillaPane.getChildren().add(numero);
             
             //Colocamos la casilla en la rejilla en su coordenada (X, Y)
@@ -126,7 +126,7 @@ public class VistaTableroConImagenes {
             case OSO: return "/resources/oso.png";
             case AGUJERO: return "/resources/agujero.png";
             case TRINEO: return "/resources/trineo.png";
-            case INTERROGANTE: return "/resources/foca.png";
+            case INTERROGANTE: return "/resources/interrogante.png"; 
             default: return null;
         }
     }
@@ -155,7 +155,6 @@ public class VistaTableroConImagenes {
         }
 
         // Obtenemos el jugador actual justo en el momento de pintar las fichas.
-        // Si la IA acaba de terminar, 'controladorTurnos' ya debería apuntar a ti.
         Jugador jugadorConTurno = controladorTurnos.getJugadorActual();
 
         //DIBUJAR JUGADORES, Miramos dónde está cada uno y ponemos su ficha
@@ -168,19 +167,26 @@ public class VistaTableroConImagenes {
                 StackPane casilla = casillas[posicion];
                 javafx.scene.Node fichaVisual;
                 
-                //Intentamos poner la foto del pingüino
+                // ASIGNACIÓN DINÁMICA DE ASPECTO SEGÚN EL ROL (Pingüino vs Foca IA)
                 try {
-                    Image imgPingu = new Image(getClass().getResourceAsStream("/resources/pinguino.png"));
-                    ImageView vistaPingu = new ImageView(imgPingu);
-                    vistaPingu.setFitWidth(35);
-                    vistaPingu.setPreserveRatio(true);
+                    String rutaFicha = "/resources/pinguino.png";
+                    
+                    // Si el objeto jugador que vamos a pintar es la IA, le encasquetamos la imagen de la Foca
+                    if (j.getTipo() == Modelo.TipoJugador.IA) {
+                        rutaFicha = "/resources/foca.png";
+                    }
+                    
+                    Image imgFicha = new Image(getClass().getResourceAsStream(rutaFicha));
+                    ImageView vistaFicha = new ImageView(imgFicha);
+                    vistaFicha.setFitWidth(35);
+                    vistaFicha.setPreserveRatio(true);
                     
                     //Efecto de sombra con el color del jugador para distinguirlos
-                    vistaPingu.setStyle("-fx-effect: dropshadow(three-pass-box, " + obtenerColorJugador(i) + ", 10, 0, 0, 0);");
-                    fichaVisual = vistaPingu;
+                    vistaFicha.setStyle("-fx-effect: dropshadow(three-pass-box, " + obtenerColorJugador(i) + ", 10, 0, 0, 0);");
+                    fichaVisual = vistaFicha;
                 } catch (Exception e) {
-                    //Ficha de texto si falla la imagen
-                    Label ficha = new Label(iconosFichas[i]);
+                    //Ficha de texto alternativa si fallan los assets gráficos
+                    Label ficha = new Label(j.getTipo() == Modelo.TipoJugador.IA ? "🦭" : iconosFichas[i]);
                     ficha.setFont(new Font(14));
                     ficha.setStyle("-fx-text-fill: " + obtenerColorJugador(i) + "; " +
                                  "-fx-font-weight: bold; -fx-background-color: white; -fx-padding: 0 2 0 2;");
@@ -188,18 +194,13 @@ public class VistaTableroConImagenes {
                 }
 
                 //EFECTO DE TURNO, Comprobamos si el jugador que estamos dibujando es el que tiene el turno real
-                //Usamos el nombre o el objeto para asegurar que el parpadeo te siga a ti
-                //Usamos comparación de nombres para evitar fallos de referencia de memoria
                 if (jugadorConTurno != null && j.getNombre().equals(jugadorConTurno.getNombre())) {
                     FadeTransition parpadeo = new FadeTransition(Duration.millis(500), fichaVisual);
                     parpadeo.setFromValue(1.0); 
-                    //Brillo total
                     parpadeo.setToValue(0.3);   
-                    //Casi invisible
                     parpadeo.setCycleCount(Timeline.INDEFINITE);
                     parpadeo.setAutoReverse(true);
                     parpadeo.play(); 
-                    //A parpadear, has flipao eh
                 }
 
                 //Mandamos la ficha a la esquina inferior derecha

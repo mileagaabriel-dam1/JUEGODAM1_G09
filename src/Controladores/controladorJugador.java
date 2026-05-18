@@ -16,7 +16,6 @@ import java.util.List;
 public class controladorJugador { 
 	//Definición de la clase que gestionará a todos los participantes
 
-
     private int idUsuarioLogueado;
     private String nombreUsuarioLogueado;
 
@@ -30,7 +29,9 @@ public class controladorJugador {
         this.jugadores = new ArrayList<>();
     }
 
-    //MÉTODOS PARA RECIBIR DATOS DE LA VISTA
+    // =========================================================================
+    // MÉTODOS PARA TRABAJAR CON LOS DATOS DE LA SESIÓN LOGUEADA (Setters y Getters)
+    // =========================================================================
     public void setIdUsuarioLogueado(int id) {
         this.idUsuarioLogueado = id;
     }
@@ -38,6 +39,19 @@ public class controladorJugador {
     public void setNombreUsuarioLogueado(String nombre) {
         this.nombreUsuarioLogueado = nombre;
     }
+
+    // Métodos Getter públicos para que VistaMenu u otras clases puedan consultar quién está jugando
+    public int getIdUsuarioLogueado() {
+        return this.idUsuarioLogueado;
+    }
+
+    public String getNombreUsuarioLogueado() {
+        return this.nombreUsuarioLogueado;
+    }
+
+    // =========================================================================
+    // GESTIÓN DE LA PARTIDA
+    // =========================================================================
 
     //Método público para configurar la partida recibiendo parámetros desde la interfaz (Vista)
     public void inicializarJugadores(int numHumanos, boolean incluirIA) {
@@ -51,7 +65,7 @@ public class controladorJugador {
             String nombreFinal = (i == 1 && nombreUsuarioLogueado != null) ? nombreUsuarioLogueado : "Jugador " + i;
             // ? = Si el jugador es el primero de la lista, y el nombre esta logueado, se le asignara el valor de 'nombreUsuarioLogueado'
             // : = Si NO es el primero de la lista, se le asignara el nombre de 'Jugador' mas el numero de la lista que le toca
-            
+            	
             //Creamos el objeto Jugador
             Jugador nuevoJugador = new Jugador(nombreFinal, obtenerColor(i), TipoJugador.HUMANO);
 
@@ -60,15 +74,13 @@ public class controladorJugador {
             if (i == 1 && idUsuarioLogueado > 0) {
                 nuevoJugador.setId(idUsuarioLogueado);
             }
-            
+            	
             //Creamos un nuevo objeto Jugador y lo metemos en la lista
             jugadores.add(nuevoJugador);
         } 
         //Fin del bucle for
 
-
         if (incluirIA) {
-            
         	//Añadimos un último jugador a la lista con nombre fijo y comportamiento de IA
             jugadores.add(new Jugador("IA-Pingu", "Rojo", TipoJugador.IA));
         }
@@ -96,7 +108,6 @@ public class controladorJugador {
     //Método para imprimir en la consola del sistema el resultado final del juego
     public void registrarVictoria(Jugador ganador) {
     	
-        
         System.out.println("¡" + ganador.getNombre() + " ha ganado!");
 
         //CONEXIÓN CON ORACLE AL FINALIZAR
